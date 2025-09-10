@@ -113,17 +113,23 @@ class ApiClient {
     });
   }
 
-  async login(data: LoginAuthDto): Promise<{ access_token: string }> {
-    const result = await this.request<{ access_token: string }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-    
-    this.token = result.access_token;
-    localStorage.setItem('auth_token', result.access_token);
-    
-    return result;
-  }
+  async login(data: LoginAuthDto): Promise<{ access_token: string; user: User }> {
+  const result = await this.request<{ access_token: string; user: User }>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+
+  this.token = result.access_token;
+  localStorage.setItem('auth_token', result.access_token);
+  localStorage.setItem('auth_user', JSON.stringify(result.user));
+
+  return result;
+}
+
+getUserFromStorage(): User | null {
+  const userStr = localStorage.getItem('auth_user');
+  return userStr ? JSON.parse(userStr) : null;
+}
 
   async getProfile(): Promise<User> {
     return this.request<User>('/auth/profile');

@@ -30,45 +30,22 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log('🔵 Début de la connexion...');
 
     try {
-      console.log('📤 Envoi des données de connexion:', loginForm);
-      
-      // Étape 1: Login pour obtenir le token
       const loginResult = await apiClient.login(loginForm);
-      console.log('✅ Login réussi, token reçu:', loginResult.access_token ? 'OUI' : 'NON');
-      
-      // Vérifier le token dans le localStorage
-      const storedToken = localStorage.getItem('auth_token');
-      console.log('🔐 Token stocké dans localStorage:', storedToken ? storedToken.substring(0, 20) + '...' : 'AUCUN');
-      
-      // Vérifier si l'API client est authentifié
-      console.log('🔍 apiClient.isAuthenticated():', apiClient.isAuthenticated());
-      
-      // Étape 2: Récupérer le profil utilisateur
-      console.log('📋 Récupération du profil...');
+
       const profile = await apiClient.getProfile();
-      console.log('✅ Profil utilisateur récupéré:', profile);
-      
-      // Étape 3: Mettre à jour le contexte
-      console.log('🔄 Mise à jour du contexte utilisateur...');
+
       setUser(profile);
-      
-      // Étape 4: Afficher le toast et rediriger
+
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue sur Honey Store !",
+        description: `Bienvenue ${profile.name} (${profile.role})`,
       });
-      
-      console.log('➡️ Redirection vers /products...');
+
       navigate('/products');
-      
     } catch (error: any) {
       console.error('❌ Erreur détaillée:', error);
-      console.error('❌ Message d\'erreur:', error.message);
-      console.error('❌ Stack:', error.stack);
-      
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
@@ -76,7 +53,6 @@ const Login = () => {
       });
     } finally {
       setIsLoading(false);
-      console.log('🔚 Fin du processus de connexion');
     }
   };
 
