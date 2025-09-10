@@ -7,11 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/lib/api';
+import { useAuth } from '@/App';
 import honeyLogo from '@/assets/honey-logo.png';
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const [loginForm, setLoginForm] = useState({
@@ -28,22 +30,53 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log('🔵 Début de la connexion...');
 
     try {
-      await apiClient.login(loginForm);
+      console.log('📤 Envoi des données de connexion:', loginForm);
+      
+      // Étape 1: Login pour obtenir le token
+      const loginResult = await apiClient.login(loginForm);
+      console.log('✅ Login réussi, token reçu:', loginResult.access_token ? 'OUI' : 'NON');
+      
+      // Vérifier le token dans le localStorage
+      const storedToken = localStorage.getItem('auth_token');
+      console.log('🔐 Token stocké dans localStorage:', storedToken ? storedToken.substring(0, 20) + '...' : 'AUCUN');
+      
+      // Vérifier si l'API client est authentifié
+      console.log('🔍 apiClient.isAuthenticated():', apiClient.isAuthenticated());
+      
+      // Étape 2: Récupérer le profil utilisateur
+      console.log('📋 Récupération du profil...');
+      const profile = await apiClient.getProfile();
+      console.log('✅ Profil utilisateur récupéré:', profile);
+      
+      // Étape 3: Mettre à jour le contexte
+      console.log('🔄 Mise à jour du contexte utilisateur...');
+      setUser(profile);
+      
+      // Étape 4: Afficher le toast et rediriger
       toast({
         title: "Connexion réussie",
         description: "Bienvenue sur Honey Store !",
       });
-      navigate('/');
-    } catch (error) {
+      
+      console.log('➡️ Redirection vers /products...');
+      navigate('/products');
+      
+    } catch (error: any) {
+      console.error('❌ Erreur détaillée:', error);
+      console.error('❌ Message d\'erreur:', error.message);
+      console.error('❌ Stack:', error.stack);
+      
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
-        description: "Vérifiez vos identifiants et réessayez.",
+        description: error.message || "Vérifiez vos identifiants et réessayez.",
       });
     } finally {
       setIsLoading(false);
+      console.log('🔚 Fin du processus de connexion');
     }
   };
 
@@ -57,13 +90,13 @@ const Login = () => {
         title: "Compte créé",
         description: "Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.",
       });
-      // Switch to login tab
       setRegisterForm({ name: '', email: '', password: '' });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Erreur d\'inscription:', error);
       toast({
         variant: "destructive",
         title: "Erreur de création",
-        description: "Impossible de créer le compte. Vérifiez vos informations.",
+        description: error.message || "Impossible de créer le compte. Vérifiez vos informations.",
       });
     } finally {
       setIsLoading(false);
@@ -73,7 +106,6 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <img src={honeyLogo} alt="Honey" className="h-16 w-24 object-contain mx-auto mb-4" />
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
@@ -98,7 +130,6 @@ const Login = () => {
                 <TabsTrigger value="register">Inscription</TabsTrigger>
               </TabsList>
 
-              {/* Login Tab */}
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
@@ -133,7 +164,6 @@ const Login = () => {
                 </form>
               </TabsContent>
 
-              {/* Register Tab */}
               <TabsContent value="register">
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="space-y-2">
