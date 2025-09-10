@@ -5,10 +5,14 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from '@/components/ui/toaster';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 
+import { CartProvider } from './contexts/CartContext'; 
+
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
+import Shop from './pages/Shop'; 
+import Cart from './pages/Cart'; 
 import NotFound from './pages/NotFound';
 import Layout from './components/Layout';
 import { apiClient, User } from './lib/api';
@@ -33,29 +37,29 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-  const checkAuth = async () => {
-    console.log('🔍 Vérification de l\'authentification au chargement...');
-    console.log('📍 apiClient.isAuthenticated():', apiClient.isAuthenticated());
-    
-    if (apiClient.isAuthenticated()) {
-      console.log('✅ Utilisateur authentifié, récupération du profil...');
-      try {
-        const profile = await apiClient.getProfile();
-        console.log('✅ Profil récupéré:', profile);
-        setUser(profile);
-      } catch (error) {
-        console.error('❌ Erreur lors de la récupération du profil:', error);
-        apiClient.logout();
-        setUser(null);
+    const checkAuth = async () => {
+      console.log('🔍 Vérification de l\'authentification au chargement...');
+      console.log('📍 apiClient.isAuthenticated():', apiClient.isAuthenticated());
+      
+      if (apiClient.isAuthenticated()) {
+        console.log('✅ Utilisateur authentifié, récupération du profil...');
+        try {
+          const profile = await apiClient.getProfile();
+          console.log('✅ Profil récupéré:', profile);
+          setUser(profile);
+        } catch (error) {
+          console.error('❌ Erreur lors de la récupération du profil:', error);
+          apiClient.logout();
+          setUser(null);
+        }
+      } else {
+        console.log('❌ Utilisateur non authentifié');
       }
-    } else {
-      console.log('❌ Utilisateur non authentifié');
-    }
-    setIsLoading(false);
-  };
+      setIsLoading(false);
+    };
 
-  checkAuth();
-}, []);
+    checkAuth();
+  }, []);
 
   if (isLoading) {
     return (
@@ -71,64 +75,94 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <AuthContext.Provider value={{ user, setUser, isLoading }}>
-          <BrowserRouter>
-            <Routes>
-              {/* Login */}
-              <Route
-                path="/login"
-                element={user ? <Navigate to="/products" replace /> : <Login />}
-              />
+        <CartProvider> {/* ajout version A */}
+          <Toaster />
+          <Sonner />
+          <AuthContext.Provider value={{ user, setUser, isLoading }}>
+            <BrowserRouter>
+              <Routes>
+                {/* Login */}
+                <Route
+                  path="/login"
+                  element={user ? <Navigate to="/products" replace /> : <Login />}
+                />
 
-              {/* Dashboard */}
-              <Route
-                path="/"
-                element={
-                  user ? (
-                    <Layout user={user}>
-                      <Dashboard />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
+                {/* Dashboard */}
+                <Route
+                  path="/"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <Dashboard />
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
 
-              {/* Products */}
-              <Route
-                path="/products"
-                element={
-                  user ? (
-                    <Layout user={user}>
-                      <Products />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
+                {/* Products */}
+                <Route
+                  path="/products"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <Products />
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
 
-              {/* Orders */}
-              <Route
-                path="/orders"
-                element={
-                  user ? (
-                    <Layout user={user}>
-                      <Orders />
-                    </Layout>
-                  ) : (
-                    <Navigate to="/login" replace />
-                  )
-                }
-              />
+                {/* Orders */}
+                <Route
+                  path="/orders"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <Orders />
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
 
-              {/* Not Found */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthContext.Provider>
+                {/* Shop */}
+                <Route
+                  path="/shop"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <Shop />
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
+
+                {/* Cart */}
+                <Route
+                  path="/cart"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <Cart />
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
+
+                {/* Not Found */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthContext.Provider>
+        </CartProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
