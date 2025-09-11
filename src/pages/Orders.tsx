@@ -20,10 +20,12 @@ import {
 import { apiClient, Order } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/App';
 
 const Orders = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,7 +37,11 @@ const Orders = () => {
   const loadOrders = async () => {
     try {
       const data = await apiClient.getOrders();
-      setOrders(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      // Filtrer les commandes selon le rôle
+      const filteredOrders = user?.role === 'admin' 
+        ? data 
+        : data.filter(order => order.userId === user?.id);
+      setOrders(filteredOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
     } catch (error) {
       toast({
         variant: "destructive",
@@ -48,6 +54,16 @@ const Orders = () => {
   };
 
   const handleDeleteOrder = async (id: number) => {
+    // Seuls les admins peuvent supprimer des commandes
+    if (user?.role !== 'admin') {
+      toast({
+        variant: "destructive",
+        title: "Accès refusé",
+        description: "Vous n'avez pas les permissions pour supprimer cette commande.",
+      });
+      return;
+    }
+
     if (!confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) return;
 
     try {
@@ -106,9 +122,14 @@ const Orders = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Commandes</h1>
+          <h1 className="text-3xl font-bold">
+            {user?.role === 'admin' ? 'Toutes les Commandes' : 'Mes Commandes'}
+          </h1>
           <p className="text-muted-foreground">
-            Gérez vos commandes et suivez leur statut
+            {user?.role === 'admin' 
+              ? 'Gérez toutes les commandes et suivez leur statut' 
+              : 'Suivez vos commandes et leur statut'
+            }
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -183,13 +204,15 @@ const Orders = () => {
                           <Eye className="mr-2 h-4 w-4" />
                           Voir détails
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => handleDeleteOrder(order.id)}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Supprimer
-                        </DropdownMenuItem>
+                        {user?.role === 'admin' && (
+                          <DropdownMenuItem 
+                            onClick={() => handleDeleteOrder(order.id)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Supprimer
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -219,12 +242,14 @@ const Orders = () => {
                   </div>
                 </div>
 
-                {/* User Info */}
-                <div className="mt-4 pt-4 border-t border-border/40">
-                  <p className="text-sm text-muted-foreground">
-                    Client ID: <span className="font-medium">{order.userId}</span>
-                  </p>
-                </div>
+                {/* User Info - Only for admins */}
+                {user?.role === 'admin' && (
+                  <div className="mt-4 pt-4 border-t border-border/40">
+                    <p className="text-sm text-muted-foreground">
+                      Client ID: <span className="font-medium">{order.userId}</span>
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

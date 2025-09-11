@@ -114,22 +114,22 @@ class ApiClient {
   }
 
   async login(data: LoginAuthDto): Promise<{ access_token: string; user: User }> {
-  const result = await this.request<{ access_token: string; user: User }>('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
+    const result = await this.request<{ access_token: string; user: User }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
 
-  this.token = result.access_token;
-  localStorage.setItem('auth_token', result.access_token);
-  localStorage.setItem('auth_user', JSON.stringify(result.user));
+    this.token = result.access_token;
+    localStorage.setItem('auth_token', result.access_token);
+    localStorage.setItem('auth_user', JSON.stringify(result.user));
 
-  return result;
-}
+    return result;
+  }
 
-getUserFromStorage(): User | null {
-  const userStr = localStorage.getItem('auth_user');
-  return userStr ? JSON.parse(userStr) : null;
-}
+  getUserFromStorage(): User | null {
+    const userStr = localStorage.getItem('auth_user');
+    return userStr ? JSON.parse(userStr) : null;
+  }
 
   async getProfile(): Promise<User> {
     return this.request<User>('/auth/profile');
@@ -138,6 +138,7 @@ getUserFromStorage(): User | null {
   logout(): void {
     this.token = null;
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user'); // ✅ ajouté depuis version A
   }
 
   // Products methods
