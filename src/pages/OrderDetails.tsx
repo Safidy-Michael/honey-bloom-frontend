@@ -1,41 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiClient } from "@/lib/api";
+import { AuthContext } from "@/App";
 
 const OrderDetails = () => {
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
   const [order, setOrder] = useState<any>(null);
   const [status, setStatus] = useState("en_attente");
 
   useEffect(() => {
-    setOrder({
-      id,
-      client: "Client Exemple",
-      total: 200,
-      status: "en_attente",
-      produits: [
-        { name: "Produit A", qty: 2 },
-        { name: "Produit B", qty: 1 },
-      ],
-    });
-    setStatus("en_attente");
+    const fetchOrder = async () => {
+      try {
+        const data = await apiClient.getOrder(Number(id));
+        setOrder(data);
+        setStatus(data.status);
+      } catch (err) {
+        console.error("Erreur récupération commande:", err);
+      }
+    };
+    fetchOrder();
   }, [id]);
 
   const updateStatus = async () => {
-  try {
-    const updated = await apiClient.updateOrder(Number(id), { status });
-    setOrder(updated);
-    alert("✅ Statut mis à jour !");
-  } catch (err) {
-    console.error("❌ Erreur mise à jour statut:", err);
-    alert("⚠️ Impossible de mettre à jour le statut");
-  }
-};
-
+    try {
+      const updated = await apiClient.updateOrder(Number(id), { status });
+      setOrder(updated);
+      alert("✅ Statut mis à jour !");
+    } catch (err) {
+      console.error("❌ Erreur mise à jour statut:", err);
+      alert("⚠️ Impossible de mettre à jour le statut");
+    }
+  };
 
   if (!order) return <p>Chargement...</p>;
 
@@ -45,28 +45,36 @@ const OrderDetails = () => {
         <CardTitle>Détails commande #{order.id}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p><strong>Client :</strong> {order.client}</p>
+        <p><strong>Client :</strong> {order.userId}</p>
         <p><strong>Total :</strong> {order.total} €</p>
-        <div>
-          <Label>Statut</Label>
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Choisir un statut" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en_attente">En attente</SelectItem>
-              <SelectItem value="en_cours">En cours</SelectItem>
-              <SelectItem value="livree">Livrée</SelectItem>
-              <SelectItem value="annulee">Annulée</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button onClick={updateStatus} className="mt-3 w-full">Mettre à jour</Button>
-        </div>
+
+        {user?.role === "admin" ? (
+          <div>
+            <Label>Statut</Label>
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choisir un statut" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en_attente">En attente</SelectItem>
+                <SelectItem value="en_cours">En cours</SelectItem>
+                <SelectItem value="livree">Livrée</SelectItem>
+                <SelectItem value="annulee">Annulée</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button onClick={updateStatus} className="mt-3 w-full">
+              Mettre à jour
+            </Button>
+          </div>
+        ) : (
+          <p><strong>Statut :</strong> {order.status}</p>
+        )}
+
         <div>
           <Label>Produits :</Label>
           <ul className="list-disc ml-6">
-            {order.produits.map((p: any, i: number) => (
-              <li key={i}>{p.qty}x {p.name}</li>
+            {order.orderItems.map((p: any, i: number) => (
+              <li key={i}>{p.quantity}x {p.productId}</li>
             ))}
           </ul>
         </div>
