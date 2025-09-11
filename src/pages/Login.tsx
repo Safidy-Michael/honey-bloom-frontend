@@ -43,7 +43,7 @@ const Login = () => {
         description: `Bienvenue ${profile.name} (${profile.role})`,
       });
 
-      navigate('/products');
+      navigate('/');
     } catch (error: any) {
       console.error('❌ Erreur détaillée:', error);
       toast({
