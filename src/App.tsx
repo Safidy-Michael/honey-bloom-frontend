@@ -8,16 +8,19 @@ import { Toaster as Sonner } from '@/components/ui/sonner';
 import { CartProvider } from './contexts/CartContext'; 
 
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import ClientDashboard from './pages/ClientDashboard';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Shop from './pages/Shop'; 
 import Cart from './pages/Cart'; 
 import NotFound from './pages/NotFound';
 import Layout from './components/Layout';
+import AdminRoute from './components/AdminRoute';
+import ClientRoute from './components/ClientRoute';
 import { apiClient, User } from './lib/api';
 
-// Créer un contexte pour le user
+// Contexte pour l'utilisateur
 export const AuthContext = createContext<{
   user: User | null;
   setUser: (user: User | null) => void;
@@ -75,7 +78,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <CartProvider> {/* ajout version A */}
+        <CartProvider>
           <Toaster />
           <Sonner />
           <AuthContext.Provider value={{ user, setUser, isLoading }}>
@@ -84,16 +87,16 @@ const App = () => {
                 {/* Login */}
                 <Route
                   path="/login"
-                  element={user ? <Navigate to="/products" replace /> : <Login />}
+                  element={user ? <Navigate to="/" replace /> : <Login />}
                 />
 
-                {/* Dashboard */}
+                {/* Dashboard (séparé Admin/Client) */}
                 <Route
                   path="/"
                   element={
                     user ? (
                       <Layout user={user}>
-                        <Dashboard />
+                        {user.role === 'admin' ? <AdminDashboard /> : <ClientDashboard />}
                       </Layout>
                     ) : (
                       <Navigate to="/login" replace />
@@ -101,13 +104,15 @@ const App = () => {
                   }
                 />
 
-                {/* Products */}
+                {/* Products - Admin only */}
                 <Route
                   path="/products"
                   element={
                     user ? (
                       <Layout user={user}>
-                        <Products />
+                        <AdminRoute>
+                          <Products />
+                        </AdminRoute>
                       </Layout>
                     ) : (
                       <Navigate to="/login" replace />
@@ -115,7 +120,7 @@ const App = () => {
                   }
                 />
 
-                {/* Orders */}
+                {/* Orders - accessible aux deux */}
                 <Route
                   path="/orders"
                   element={
@@ -129,13 +134,15 @@ const App = () => {
                   }
                 />
 
-                {/* Shop */}
+                {/* Shop - Client only */}
                 <Route
                   path="/shop"
                   element={
                     user ? (
                       <Layout user={user}>
-                        <Shop />
+                        <ClientRoute>
+                          <Shop />
+                        </ClientRoute>
                       </Layout>
                     ) : (
                       <Navigate to="/login" replace />
@@ -143,13 +150,15 @@ const App = () => {
                   }
                 />
 
-                {/* Cart */}
+                {/* Cart - Client only */}
                 <Route
                   path="/cart"
                   element={
                     user ? (
                       <Layout user={user}>
-                        <Cart />
+                        <ClientRoute>
+                          <Cart />
+                        </ClientRoute>
                       </Layout>
                     ) : (
                       <Navigate to="/login" replace />
