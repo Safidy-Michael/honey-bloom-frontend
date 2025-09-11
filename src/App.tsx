@@ -19,6 +19,9 @@ import Layout from './components/Layout';
 import AdminRoute from './components/AdminRoute';
 import ClientRoute from './components/ClientRoute';
 import { apiClient, User } from './lib/api';
+import NewProduct from './pages/NewProduct';
+import EditProduct from './pages/EditProduct';
+import OrderDetails from './pages/OrderDetails';
 
 // Contexte pour l'utilisateur
 export const AuthContext = createContext<{
@@ -120,6 +123,36 @@ const App = () => {
                   }
                 />
 
+                {/* Product Management - Admin only */}
+                <Route
+                  path="/products/new"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <AdminRoute>
+                          <NewProduct />
+                        </AdminRoute>
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
+                <Route
+                  path="/products/:id/edit"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <AdminRoute>
+                          <EditProduct />
+                        </AdminRoute>
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
+
                 {/* Orders - accessible aux deux */}
                 <Route
                   path="/orders"
@@ -127,6 +160,20 @@ const App = () => {
                     user ? (
                       <Layout user={user}>
                         <Orders />
+                      </Layout>
+                    ) : (
+                      <Navigate to="/login" replace />
+                    )
+                  }
+                />
+
+                {/* Order Details */}
+                <Route
+                  path="/orders/:id"
+                  element={
+                    user ? (
+                      <Layout user={user}>
+                        <OrderDetails />
                       </Layout>
                     ) : (
                       <Navigate to="/login" replace />
