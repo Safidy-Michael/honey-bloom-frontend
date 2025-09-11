@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { apiClient } from "@/lib/api";
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -11,7 +12,6 @@ const OrderDetails = () => {
   const [status, setStatus] = useState("en_attente");
 
   useEffect(() => {
-    // TODO: fetch API order by id
     setOrder({
       id,
       client: "Client Exemple",
@@ -25,10 +25,17 @@ const OrderDetails = () => {
     setStatus("en_attente");
   }, [id]);
 
-  const updateStatus = () => {
-    console.log("📌 Nouveau statut:", status);
-    // TODO: call API update status
-  };
+  const updateStatus = async () => {
+  try {
+    const updated = await apiClient.updateOrder(Number(id), { status });
+    setOrder(updated);
+    alert("✅ Statut mis à jour !");
+  } catch (err) {
+    console.error("❌ Erreur mise à jour statut:", err);
+    alert("⚠️ Impossible de mettre à jour le statut");
+  }
+};
+
 
   if (!order) return <p>Chargement...</p>;
 

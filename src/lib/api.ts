@@ -185,6 +185,14 @@ class ApiClient {
       body: JSON.stringify(data),
     });
   }
+  async updateOrder(id: number, data: { status: string }): Promise<Order> {
+  return this.request<Order>(`/orders/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+}
+
 
   async deleteOrder(id: number): Promise<void> {
     await this.request(`/orders/${id}`, {
