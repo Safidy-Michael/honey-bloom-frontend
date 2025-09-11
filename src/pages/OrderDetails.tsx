@@ -5,11 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiClient } from "@/lib/api";
+import { useAuth } from "@/App"; 
 
 const OrderDetails = () => {
   const { id } = useParams();
+  const { user } = useAuth(); 
   const [order, setOrder] = useState<any>(null);
   const [status, setStatus] = useState("en_attente");
+
+  const isAdmin = user?.role === "admin"; 
 
   useEffect(() => {
     setOrder({
@@ -22,20 +26,20 @@ const OrderDetails = () => {
         { name: "Produit B", qty: 1 },
       ],
     });
+
     setStatus("en_attente");
   }, [id]);
 
   const updateStatus = async () => {
-  try {
-    const updated = await apiClient.updateOrder(Number(id), { status });
-    setOrder(updated);
-    alert("✅ Statut mis à jour !");
-  } catch (err) {
-    console.error("❌ Erreur mise à jour statut:", err);
-    alert("⚠️ Impossible de mettre à jour le statut");
-  }
-};
-
+    try {
+      const updated = await apiClient.updateOrder(Number(id), { status });
+      setOrder(updated);
+      alert("✅ Statut mis à jour !");
+    } catch (err) {
+      console.error("❌ Erreur mise à jour statut:", err);
+      alert("⚠️ Impossible de mettre à jour le statut");
+    }
+  };
 
   if (!order) return <p>Chargement...</p>;
 
@@ -47,9 +51,14 @@ const OrderDetails = () => {
       <CardContent className="space-y-4">
         <p><strong>Client :</strong> {order.client}</p>
         <p><strong>Total :</strong> {order.total} €</p>
+
         <div>
           <Label>Statut</Label>
-          <Select value={status} onValueChange={setStatus}>
+          <Select
+            value={status}
+            onValueChange={setStatus}
+            disabled={!isAdmin} 
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Choisir un statut" />
             </SelectTrigger>
@@ -60,8 +69,14 @@ const OrderDetails = () => {
               <SelectItem value="annulee">Annulée</SelectItem>
             </SelectContent>
           </Select>
-          <Button onClick={updateStatus} className="mt-3 w-full">Mettre à jour</Button>
+
+          {isAdmin && (
+            <Button onClick={updateStatus} className="mt-3 w-full">
+              Mettre à jour
+            </Button>
+          )}
         </div>
+
         <div>
           <Label>Produits :</Label>
           <ul className="list-disc ml-6">
