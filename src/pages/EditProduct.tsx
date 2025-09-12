@@ -57,7 +57,7 @@ const EditProduct = () => {
     try {
       await apiClient.updateProduct(Number(id), form);
       alert("✅ Produit mis à jour !");
-      navigate(`/products/${id}`); // redirige vers la page détail
+      navigate(`/products/${id}`);
     } catch (err) {
       console.error("❌ Erreur mise à jour produit:", err);
       alert("Impossible de mettre à jour le produit");

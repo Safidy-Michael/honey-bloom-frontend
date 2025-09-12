@@ -100,7 +100,7 @@ const ClientDashboard = () => {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{totalSpent.toFixed(2)}€</div>
+            <div className="text-2xl font-bold text-primary">{totalSpent.toFixed(2)} Ariary</div>
             <p className="text-xs text-muted-foreground">montant total</p>
           </CardContent>
         </Card>
@@ -112,7 +112,7 @@ const ClientDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
-              {recentOrder ? `${recentOrder.total.toFixed(2)}€` : 'Aucune'}
+              {recentOrder ? `${recentOrder.total.toFixed(2)} Ariary` : 'Aucune'}
             </div>
             <p className="text-xs text-muted-foreground">
               {recentOrder ? new Date(recentOrder.createdAt).toLocaleDateString('fr-FR') : 'commande'}
@@ -145,7 +145,7 @@ const ClientDashboard = () => {
                   <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-primary">{product.price.toFixed(2)}Arriary</p>
+                  <p className="font-bold text-primary">{product.price.toFixed(2)} Arriary</p>
                   {product.badge && (
                     <Badge variant="secondary" className="text-xs">
                       {product.badge}
@@ -192,7 +192,7 @@ const ClientDashboard = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-primary">{order.total.toFixed(2)}€</p>
+                    <p className="font-medium text-primary">{order.total.toFixed(2)} Ariary</p>
                     <Badge variant="secondary" className="text-xs">
                       {order.status}
                     </Badge>

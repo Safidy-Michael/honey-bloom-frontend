@@ -181,10 +181,10 @@ const Cart = () => {
                       
                       <div className="text-right">
                         <div className="text-sm text-muted-foreground">
-                          {item.product.price.toFixed(2)}€ × {item.quantity}
+                          {item.product.price.toFixed(2)}Ariary × {item.quantity}
                         </div>
                         <div className="font-semibold text-primary">
-                          {(item.product.price * item.quantity).toFixed(2)}€
+                          {(item.product.price * item.quantity).toFixed(2)} Ariary
                         </div>
                       </div>
                     </div>

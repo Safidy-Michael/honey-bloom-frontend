@@ -187,7 +187,7 @@ const Orders = () => {
                   <div className="flex items-center gap-2">
                     <div className="text-right">
                       <div className="text-2xl font-bold text-primary">
-                        {order.total.toFixed(2)}€
+                        {order.total.toFixed(2)} Ariary
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {order.orderItems.length} article{order.orderItems.length > 1 ? 's' : ''}
@@ -230,12 +230,12 @@ const Orders = () => {
                           <div>
                             <p className="text-sm font-medium">Produit ID: {item.productId}</p>
                             <p className="text-xs text-muted-foreground">
-                              Quantité: {item.quantity} × {item.price.toFixed(2)}€
+                              Quantité: {item.quantity} × {item.price.toFixed(2)} Ariary
                             </p>
                           </div>
                         </div>
                         <div className="text-sm font-medium">
-                          {(item.quantity * item.price).toFixed(2)}€
+                          {(item.quantity * item.price).toFixed(2)} Ariary
                         </div>
                       </div>
                     ))}

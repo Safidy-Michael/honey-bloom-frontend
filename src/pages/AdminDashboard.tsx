@@ -108,7 +108,7 @@ const AdminDashboard = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{totalRevenue.toFixed(2)}€</div>
+            <div className="text-2xl font-bold text-primary">{totalRevenue.toFixed(2)} Ariary</div>
             <p className="text-xs text-muted-foreground">revenus totaux</p>
           </CardContent>
         </Card>
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
               <div key={product.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div className="flex-1">
                   <h4 className="font-medium">{product.name}</h4>
-                  <p className="text-sm text-muted-foreground">{product.price.toFixed(2)}Ariary</p>
+                  <p className="text-sm text-muted-foreground">{product.price.toFixed(2)} Ariary</p>
                 </div>
                 <div className="text-right">
                   <Badge variant={product.stock < 10 ? "destructive" : "secondary"}>
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-primary">{order.total.toFixed(2)}€</p>
+                  <p className="font-medium text-primary">{order.total.toFixed(2)} Ariary</p>
                   <Badge variant="secondary" className="text-xs">
                     {order.status}
                   </Badge>

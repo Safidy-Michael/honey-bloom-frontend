@@ -213,7 +213,7 @@ const Dashboard = () => {
                     >
                       {order.status}
                     </Badge>
-                    <span className="text-sm font-medium">{order.total.toFixed(2)}Ariary</span>
+                    <span className="text-sm font-medium">{order.total.toFixed(2)} Ariary</span>
                   </div>
                 </div>
               ))}
