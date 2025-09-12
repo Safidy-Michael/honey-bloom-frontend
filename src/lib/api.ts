@@ -100,7 +100,9 @@ class ApiClient {
 
     if (!response.ok) {
       const text = await response.text();
-      console.error("❌ Erreur API:", response.status, text);
+      if (import.meta.env.DEV) {
+        console.error("❌ Erreur API:", response.status, text);
+      }
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
@@ -125,6 +127,10 @@ class ApiClient {
     localStorage.setItem('auth_token', result.access_token);
     localStorage.setItem('auth_user', JSON.stringify(result.user));
 
+    if (import.meta.env.DEV) {
+      console.log('✅ Utilisateur connecté:', result.user);
+    }
+
     return result;
   }
 
@@ -134,13 +140,20 @@ class ApiClient {
   }
 
   async getProfile(): Promise<User> {
-    return this.request<User>('/auth/profile');
+    const profile = await this.request<User>('/auth/profile');
+    if (import.meta.env.DEV) {
+      console.log('✅ Profil récupéré:', profile);
+    }
+    return profile;
   }
 
   logout(): void {
     this.token = null;
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
+    if (import.meta.env.DEV) {
+      console.log('🔒 Utilisateur déconnecté');
+    }
   }
 
   // Products methods
@@ -187,7 +200,9 @@ class ApiClient {
   }
 
   async patchOrder(id: number, data: Partial<Order>): Promise<Order> {
-    console.log("📤 PATCH Order data:", data);
+    if (import.meta.env.DEV) {
+      console.log("📤 PATCH Order data:", data);
+    }
     return this.request<Order>(`/orders/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
