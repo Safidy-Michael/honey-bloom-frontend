@@ -1,36 +1,41 @@
-import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiClient } from "@/lib/api";
-import { AuthContext } from "@/App";
+import { useAuth } from "@/App"; 
 
 const OrderDetails = () => {
-  const { user } = useContext(AuthContext);
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth(); 
   const [order, setOrder] = useState<any>(null);
   const [status, setStatus] = useState("en_attente");
 
+  const isAdmin = user?.role === "admin"; 
+
+  const fetchOrder = async () => {
+    try {
+      const data = await apiClient.getOrder(Number(id));
+      setOrder(data);
+      setStatus(data.status);
+    } catch (err) {
+      console.error("Erreur chargement commande:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const data = await apiClient.getOrder(Number(id));
-        setOrder(data);
-        setStatus(data.status);
-      } catch (err) {
-        console.error("Erreur récupération commande:", err);
-      }
-    };
     fetchOrder();
   }, [id]);
 
   const updateStatus = async () => {
     try {
-      const updated = await apiClient.updateOrder(Number(id), { status });
-      setOrder(updated);
+      await apiClient.patchOrder(Number(id), { status });
       alert("✅ Statut mis à jour !");
+      
+      fetchOrder();
     } catch (err) {
       console.error("❌ Erreur mise à jour statut:", err);
       alert("⚠️ Impossible de mettre à jour le statut");
@@ -46,29 +51,32 @@ const OrderDetails = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <p><strong>Client :</strong> {order.userId}</p>
-        <p><strong>Total :</strong> {order.total} €</p>
+        <p><strong>Total :</strong> {order.total} Ariary</p>
 
-        {user?.role === "admin" ? (
-          <div>
-            <Label>Statut</Label>
-            <Select value={status} onValueChange={setStatus}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choisir un statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en_attente">En attente</SelectItem>
-                <SelectItem value="en_cours">En cours</SelectItem>
-                <SelectItem value="livree">Livrée</SelectItem>
-                <SelectItem value="annulee">Annulée</SelectItem>
-              </SelectContent>
-            </Select>
+        <div>
+          <Label>Statut</Label>
+          <Select
+            value={status}
+            onValueChange={setStatus}
+            disabled={!isAdmin} 
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Choisir un statut" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en_attente">En attente</SelectItem>
+              <SelectItem value="en_cours">En cours</SelectItem>
+              <SelectItem value="livree">Livrée</SelectItem>
+              <SelectItem value="annulee">Annulée</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {isAdmin && (
             <Button onClick={updateStatus} className="mt-3 w-full">
               Mettre à jour
             </Button>
-          </div>
-        ) : (
-          <p><strong>Statut :</strong> {order.status}</p>
-        )}
+          )}
+        </div>
 
         <div>
           <Label>Produits :</Label>
