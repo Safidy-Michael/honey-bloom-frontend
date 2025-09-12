@@ -32,7 +32,7 @@ const OrderDetails = () => {
 
   const updateStatus = async () => {
     try {
-      const updated = await apiClient.updateOrder(Number(id), { status });
+      const updated = await apiClient.patchOrder(Number(id), { status });
       setOrder(updated);
       alert("✅ Statut mis à jour !");
     } catch (err) {
@@ -50,7 +50,7 @@ const OrderDetails = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <p><strong>Client :</strong> {order.client}</p>
-        <p><strong>Total :</strong> {order.total} €</p>
+        <p><strong>Total :</strong> {order.total} Ariary</p>
 
         <div>
           <Label>Statut</Label>

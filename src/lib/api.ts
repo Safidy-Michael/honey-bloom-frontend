@@ -83,11 +83,11 @@ class ApiClient {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
-    
+
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
-    
+
     return headers;
   }
 
@@ -99,6 +99,8 @@ class ApiClient {
     });
 
     if (!response.ok) {
+      const text = await response.text();
+      console.error("❌ Erreur API:", response.status, text);
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
@@ -138,7 +140,7 @@ class ApiClient {
   logout(): void {
     this.token = null;
     localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user'); // ✅ ajouté depuis version A
+    localStorage.removeItem('auth_user');
   }
 
   // Products methods
@@ -165,9 +167,7 @@ class ApiClient {
   }
 
   async deleteProduct(id: number): Promise<void> {
-    await this.request(`/products/${id}`, {
-      method: 'DELETE',
-    });
+    await this.request(`/products/${id}`, { method: 'DELETE' });
   }
 
   // Orders methods
@@ -185,22 +185,19 @@ class ApiClient {
       body: JSON.stringify(data),
     });
   }
-  async updateOrder(id: number, data: { status: string }): Promise<Order> {
-  return this.request<Order>(`/orders/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-}
 
-
-  async deleteOrder(id: number): Promise<void> {
-    await this.request(`/orders/${id}`, {
-      method: 'DELETE',
+  async patchOrder(id: number, data: Partial<Order>): Promise<Order> {
+    console.log("📤 PATCH Order data:", data);
+    return this.request<Order>(`/orders/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
     });
   }
 
-  // Check if user is authenticated
+  async deleteOrder(id: number): Promise<void> {
+    await this.request(`/orders/${id}`, { method: 'DELETE' });
+  }
+
   isAuthenticated(): boolean {
     return !!this.token;
   }
