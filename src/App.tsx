@@ -22,6 +22,7 @@ import { apiClient, User } from './lib/api';
 import NewProduct from './pages/NewProduct';
 import EditProduct from './pages/EditProduct';
 import OrderDetails from './pages/OrderDetails';
+import ProductDetail from './pages/ProductDetail';
 
 // Contexte pour l'utilisateur
 export const AuthContext = createContext<{
@@ -122,7 +123,7 @@ const App = () => {
                     )
                   }
                 />
-
+                <Route path="/products/:id" element={<ProductDetail />} />
                 {/* Product Management - Admin only */}
                 <Route
                   path="/products/new"
