@@ -33,9 +33,7 @@ const Login = () => {
 
     try {
       const loginResult = await apiClient.login(loginForm);
-
       const profile = await apiClient.getProfile();
-
       setUser(profile);
 
       toast({
@@ -45,7 +43,7 @@ const Login = () => {
 
       navigate('/');
     } catch (error: any) {
-      console.error('❌ Erreur détaillée:', error);
+      if (import.meta.env.DEV) console.error('❌ Erreur login:', error);
       toast({
         variant: "destructive",
         title: "Erreur de connexion",
@@ -68,7 +66,7 @@ const Login = () => {
       });
       setRegisterForm({ name: '', email: '', password: '' });
     } catch (error: any) {
-      console.error('Erreur d\'inscription:', error);
+      if (import.meta.env.DEV) console.error('❌ Erreur inscription:', error);
       toast({
         variant: "destructive",
         title: "Erreur de création",
@@ -117,6 +115,7 @@ const Login = () => {
                       value={loginForm.email}
                       onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                       required
+                      autoComplete="email"
                     />
                   </div>
                   <div className="space-y-2">
@@ -127,6 +126,7 @@ const Login = () => {
                       value={loginForm.password}
                       onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                       required
+                      autoComplete="current-password"
                     />
                   </div>
                   <Button 
@@ -151,6 +151,7 @@ const Login = () => {
                       value={registerForm.name}
                       onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
                       required
+                      autoComplete="name"
                     />
                   </div>
                   <div className="space-y-2">
@@ -162,6 +163,7 @@ const Login = () => {
                       value={registerForm.email}
                       onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
                       required
+                      autoComplete="email"
                     />
                   </div>
                   <div className="space-y-2">
@@ -172,6 +174,7 @@ const Login = () => {
                       value={registerForm.password}
                       onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                       required
+                      autoComplete="new-password"
                     />
                   </div>
                   <Button 

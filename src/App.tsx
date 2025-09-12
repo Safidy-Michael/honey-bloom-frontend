@@ -24,7 +24,6 @@ import EditProduct from './pages/EditProduct';
 import OrderDetails from './pages/OrderDetails';
 import ProductDetail from './pages/ProductDetail';
 
-// Contexte pour l'utilisateur
 export const AuthContext = createContext<{
   user: User | null;
   setUser: (user: User | null) => void;
@@ -45,22 +44,16 @@ const App = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      console.log('🔍 Vérification de l\'authentification au chargement...');
-      console.log('📍 apiClient.isAuthenticated():', apiClient.isAuthenticated());
-      
       if (apiClient.isAuthenticated()) {
-        console.log('✅ Utilisateur authentifié, récupération du profil...');
         try {
           const profile = await apiClient.getProfile();
-          console.log('✅ Profil récupéré:', profile);
           setUser(profile);
+          if (import.meta.env.DEV) console.log('✅ Profil récupéré:', profile);
         } catch (error) {
-          console.error('❌ Erreur lors de la récupération du profil:', error);
+          if (import.meta.env.DEV) console.error('❌ Erreur profil:', error);
           apiClient.logout();
           setUser(null);
         }
-      } else {
-        console.log('❌ Utilisateur non authentifié');
       }
       setIsLoading(false);
     };
@@ -88,13 +81,7 @@ const App = () => {
           <AuthContext.Provider value={{ user, setUser, isLoading }}>
             <BrowserRouter>
               <Routes>
-                {/* Login */}
-                <Route
-                  path="/login"
-                  element={user ? <Navigate to="/" replace /> : <Login />}
-                />
-
-                {/* Dashboard (séparé Admin/Client) */}
+                <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
                 <Route
                   path="/"
                   element={
@@ -107,114 +94,14 @@ const App = () => {
                     )
                   }
                 />
-
-                {/* Products - Admin only */}
-                <Route
-                  path="/products"
-                  element={
-                    user ? (
-                      <Layout user={user}>
-                        <AdminRoute>
-                          <Products />
-                        </AdminRoute>
-                      </Layout>
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
-                  }
-                />
+                <Route path="/products" element={<Layout user={user}><AdminRoute><Products /></AdminRoute></Layout>} />
                 <Route path="/products/:id" element={<ProductDetail />} />
-                {/* Product Management - Admin only */}
-                <Route
-                  path="/products/new"
-                  element={
-                    user ? (
-                      <Layout user={user}>
-                        <AdminRoute>
-                          <NewProduct />
-                        </AdminRoute>
-                      </Layout>
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
-                  }
-                />
-                <Route
-                  path="/products/:id/edit"
-                  element={
-                    user ? (
-                      <Layout user={user}>
-                        <AdminRoute>
-                          <EditProduct />
-                        </AdminRoute>
-                      </Layout>
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
-                  }
-                />
-
-                {/* Orders - accessible aux deux */}
-                <Route
-                  path="/orders"
-                  element={
-                    user ? (
-                      <Layout user={user}>
-                        <Orders />
-                      </Layout>
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
-                  }
-                />
-
-                {/* Order Details */}
-                <Route
-                  path="/orders/:id"
-                  element={
-                    user ? (
-                      <Layout user={user}>
-                        <OrderDetails />
-                      </Layout>
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
-                  }
-                />
-
-                {/* Shop - Client only */}
-                <Route
-                  path="/shop"
-                  element={
-                    user ? (
-                      <Layout user={user}>
-                        <ClientRoute>
-                          <Shop />
-                        </ClientRoute>
-                      </Layout>
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
-                  }
-                />
-
-                {/* Cart - Client only */}
-                <Route
-                  path="/cart"
-                  element={
-                    user ? (
-                      <Layout user={user}>
-                        <ClientRoute>
-                          <Cart />
-                        </ClientRoute>
-                      </Layout>
-                    ) : (
-                      <Navigate to="/login" replace />
-                    )
-                  }
-                />
-
-                {/* Not Found */}
+                <Route path="/products/new" element={<Layout user={user}><AdminRoute><NewProduct /></AdminRoute></Layout>} />
+                <Route path="/products/:id/edit" element={<Layout user={user}><AdminRoute><EditProduct /></AdminRoute></Layout>} />
+                <Route path="/orders" element={<Layout user={user}><Orders /></Layout>} />
+                <Route path="/orders/:id" element={<Layout user={user}><OrderDetails /></Layout>} />
+                <Route path="/shop" element={<Layout user={user}><ClientRoute><Shop /></ClientRoute></Layout>} />
+                <Route path="/cart" element={<Layout user={user}><ClientRoute><Cart /></ClientRoute></Layout>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
