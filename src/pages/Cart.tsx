@@ -205,7 +205,7 @@ const Cart = () => {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Sous-total ({getTotalItems()} articles)</span>
-                  <span>{getTotalPrice().toFixed(2)}€</span>
+                  <span>{getTotalPrice().toFixed(2)}Arriary</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Livraison</span>

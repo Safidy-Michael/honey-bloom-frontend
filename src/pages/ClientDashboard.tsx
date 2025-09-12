@@ -145,7 +145,7 @@ const ClientDashboard = () => {
                   <p className="text-sm text-muted-foreground line-clamp-1">{product.description}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-primary">{product.price.toFixed(2)}€</p>
+                  <p className="font-bold text-primary">{product.price.toFixed(2)}Arriary</p>
                   {product.badge && (
                     <Badge variant="secondary" className="text-xs">
                       {product.badge}

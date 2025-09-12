@@ -173,7 +173,7 @@ const Products = () => {
                 {/* Price and Stock */}
                 <div className="flex items-center justify-between">
                   <div className="text-2xl font-bold text-primary">
-                    {product.price.toFixed(2)}€
+                    {product.price.toFixed(2)}Ariary
                   </div>
                   <Badge 
                     variant={product.stock > 10 ? "default" : product.stock > 0 ? "warning" : "destructive"}

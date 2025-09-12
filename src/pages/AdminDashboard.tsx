@@ -146,7 +146,7 @@ const AdminDashboard = () => {
               <div key={product.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <div className="flex-1">
                   <h4 className="font-medium">{product.name}</h4>
-                  <p className="text-sm text-muted-foreground">{product.price.toFixed(2)}€</p>
+                  <p className="text-sm text-muted-foreground">{product.price.toFixed(2)}Ariary</p>
                 </div>
                 <div className="text-right">
                   <Badge variant={product.stock < 10 ? "destructive" : "secondary"}>
