@@ -1,5 +1,7 @@
 // API configuration and types for Honey API
-const API_BASE_URL = 'http://localhost:3000';
+//const API_BASE_URL = 'http://localhost:3000';
+
+const API_BASE_URL = 'https://honey-api-c1ye.onrender.com'
 
 // Types based on OpenAPI schema
 export interface User {

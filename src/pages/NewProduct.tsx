@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { apiClient } from "@/lib/api"; 
 
 const NewProduct = () => {
   const [form, setForm] = useState({
@@ -13,14 +14,40 @@ const NewProduct = () => {
     image: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("📌 Nouveau produit créé:", form);
-    // TODO: call API
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const product = await apiClient.createProduct({
+        name: form.name,
+        description: form.description,
+        price: Number(form.price),
+        stock: Number(form.stock),
+        imageUrl: form.image || undefined,
+      });
+
+      setSuccess(`✅ Produit créé avec succès : ${product.name}`);
+      setForm({ name: "", description: "", price: "", stock: "", image: "" });
+
+      if (import.meta.env.DEV) {
+        console.log("📌 Nouveau produit créé:", product);
+      }
+    } catch (err: any) {
+      setError(err.message || "❌ Erreur lors de la création du produit");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,7 +77,13 @@ const NewProduct = () => {
             <Label>Image URL</Label>
             <Input name="image" value={form.image} onChange={handleChange} />
           </div>
-          <Button type="submit" className="w-full">Créer</Button>
+
+          {error && <p className="text-red-500">{error}</p>}
+          {success && <p className="text-green-500">{success}</p>}
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Création en cours..." : "Créer"}
+          </Button>
         </form>
       </CardContent>
     </Card>
