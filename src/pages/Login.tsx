@@ -13,7 +13,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiClient } from "@/lib/api";
-import { useAuth } from "@/App";
+import { useAuth } from "@/contexts/AuthContext";
 import honeyLogo from "@/assets/honey-logo.png";
 
 const Login = () => {

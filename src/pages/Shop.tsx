@@ -23,8 +23,27 @@ const Shop = () => {
   const [quantities, setQuantities] = useState<Record<number, number>>({});
 
   useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const data = await apiClient.getProducts();
+        setProducts(data);
+        const initialQuantities: Record<number, number> = {};
+        data.forEach((product) => {
+          initialQuantities[product.id] = 1;
+        });
+        setQuantities(initialQuantities);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger les produits.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
     loadProducts();
-  }, []);
+  }, [toast]);
 
   const loadProducts = async () => {
     try {

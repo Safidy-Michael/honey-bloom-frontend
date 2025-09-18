@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -12,7 +12,8 @@ import { ShoppingCart, Package, Heart, Star, Eye, Plus } from "lucide-react";
 import { apiClient, Product, Order } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/App";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
@@ -22,18 +23,15 @@ const ClientDashboard = () => {
   const [myOrders, setMyOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     try {
       const [productsData, ordersData] = await Promise.all([
         apiClient.getProducts(),
         apiClient.getOrders(),
       ]);
+
       setProducts(productsData.slice(0, 6));
-      // Filtrer seulement les commandes de l'utilisateur connecté
+
       const userOrders = ordersData.filter(
         (order) => order.userId === user?.id,
       );
@@ -52,7 +50,11 @@ const ClientDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast, user?.id]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   if (isLoading) {
     return (

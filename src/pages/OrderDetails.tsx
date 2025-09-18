@@ -11,11 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { apiClient, Order, OrderItem } from "@/lib/api";
-import { useAuth } from "@/App";
+import { useAuth } from "@/contexts/AuthContext";
 
 const OrderDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  
   const { user } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
   const [status, setStatus] = useState("en_attente");

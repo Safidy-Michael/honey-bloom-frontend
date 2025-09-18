@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,11 +34,7 @@ const Products = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       const data = await apiClient.getProducts();
       setProducts(data);
@@ -51,7 +47,11 @@ const Products = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   const handleDeleteProduct = async (id: number) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) return;

@@ -1,4 +1,5 @@
-import { useAuth } from "@/App";
+import { useAuth } from "@/contexts/AuthContext";
+
 import { Navigate } from "react-router-dom";
 
 interface AdminRouteProps {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -26,7 +26,8 @@ import {
 import { apiClient, Order } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/App";
+import { useAuth } from "@/contexts/AuthContext";
+
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -36,14 +37,9 @@ const Orders = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     try {
       const data = await apiClient.getOrders();
-      // Filtrer les commandes selon le rôle
       const filteredOrders =
         user?.role === "admin"
           ? data
@@ -63,10 +59,13 @@ const Orders = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast, user]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
 
   const handleDeleteOrder = async (id: number) => {
-    // Seuls les admins peuvent supprimer des commandes
     if (user?.role !== "admin") {
       toast({
         variant: "destructive",
@@ -76,7 +75,6 @@ const Orders = () => {
       });
       return;
     }
-
     if (!confirm("Êtes-vous sûr de vouloir supprimer cette commande ?")) return;
 
     try {
@@ -142,7 +140,6 @@ const Orders = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">
@@ -161,7 +158,6 @@ const Orders = () => {
         </div>
       </div>
 
-      {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
@@ -172,7 +168,6 @@ const Orders = () => {
         />
       </div>
 
-      {/* Orders List */}
       {filteredOrders.length === 0 ? (
         <Card className="border-border/40">
           <CardContent className="flex flex-col items-center justify-center py-16">
@@ -251,7 +246,6 @@ const Orders = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                {/* Order Items */}
                 <div className="space-y-2">
                   <h4 className="text-sm font-medium text-muted-foreground">
                     Articles commandés:
@@ -282,7 +276,6 @@ const Orders = () => {
                   </div>
                 </div>
 
-                {/* User Info - Only for admins */}
                 {user?.role === "admin" && (
                   <div className="mt-4 pt-4 border-t border-border/40">
                     <p className="text-sm text-muted-foreground">
