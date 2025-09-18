@@ -1,5 +1,6 @@
-import { useAuth } from '@/App';
-import { Navigate } from 'react-router-dom';
+import { useAuth } from "@/contexts/AuthContext";
+
+import { Navigate } from "react-router-dom";
 
 interface ClientRouteProps {
   children: React.ReactNode;
@@ -7,11 +8,11 @@ interface ClientRouteProps {
 
 const ClientRoute = ({ children }: ClientRouteProps) => {
   const { user } = useAuth();
-  
-  if (user?.role !== 'client') {
+
+  if (user?.role !== "client") {
     return <Navigate to="/not-found" replace />;
   }
-  
+
   return <>{children}</>;
 };
 

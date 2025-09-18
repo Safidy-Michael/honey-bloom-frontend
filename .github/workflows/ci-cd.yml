@@ -1,0 +1,35 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies with peer deps
+        run: |
+          npm install -g install-peerdeps
+          install-peerdeps eslint-config-airbnb --dev
+          npm install
+
+      - name: Run lint
+        run: npm run lint
+
+      #- name: Run tests
+      #  run: npm test
+
+      - name: Build project
+        run: npm run build
