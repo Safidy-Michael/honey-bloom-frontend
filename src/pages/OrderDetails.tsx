@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback,useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,31 +10,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { apiClient } from "@/lib/api";
+import { apiClient, Order, OrderItem } from "@/lib/api";
 import { useAuth } from "@/App";
 
 const OrderDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<Order | null>(null);
   const [status, setStatus] = useState("en_attente");
 
   const isAdmin = user?.role === "admin";
 
-  const fetchOrder = async () => {
+  const fetchOrder = useCallback(async () => {
     try {
       const data = await apiClient.getOrder(Number(id));
       setOrder(data);
       setStatus(data.status);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Erreur chargement commande:", err);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchOrder();
-  }, [id]);
+  }, [fetchOrder]);
 
   const updateStatus = async () => {
     try {
@@ -87,7 +87,7 @@ const OrderDetails = () => {
         <div>
           <Label>Produits :</Label>
           <ul className="list-disc ml-6">
-            {order.orderItems.map((p: any, i: number) => (
+            {order.orderItems.map((p: OrderItem, i: number) => (
               <li key={i}>
                 {p.quantity}x {p.productId}
               </li>
