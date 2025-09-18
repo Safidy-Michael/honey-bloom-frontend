@@ -1,28 +1,28 @@
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { useCart } from '@/contexts/CartContext';
-import { 
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/contexts/CartContext";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { 
-  Package, 
-  ShoppingCart, 
-  Users, 
+} from "@/components/ui/dropdown-menu";
+import {
+  Package,
+  ShoppingCart,
+  Users,
   Home,
   LogOut,
   Menu,
   X,
-  Store
-} from 'lucide-react';
-import { apiClient } from '@/lib/api';
-import honeyLogo from '@/assets/honey-logo.png';
+  Store,
+} from "lucide-react";
+import { apiClient } from "@/lib/api";
+import honeyLogo from "@/assets/honey-logo.png";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -37,21 +37,21 @@ const Layout = ({ children, user }: LayoutProps) => {
 
   const handleLogout = () => {
     apiClient.logout();
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   const getNavigationItems = () => {
-    if (user?.role === 'admin') {
+    if (user?.role === "admin") {
       return [
-        { icon: Home, label: 'Dashboard', path: '/' },
-        { icon: Package, label: 'Produits', path: '/products' },
-        { icon: ShoppingCart, label: 'Commandes', path: '/orders' },
+        { icon: Home, label: "Dashboard", path: "/" },
+        { icon: Package, label: "Produits", path: "/products" },
+        { icon: ShoppingCart, label: "Commandes", path: "/orders" },
       ];
     } else {
       return [
-        { icon: Home, label: 'Accueil', path: '/' },
-        { icon: Store, label: 'Boutique', path: '/shop' },
-        { icon: ShoppingCart, label: 'Mes Commandes', path: '/orders' },
+        { icon: Home, label: "Accueil", path: "/" },
+        { icon: Store, label: "Boutique", path: "/shop" },
+        { icon: ShoppingCart, label: "Mes Commandes", path: "/orders" },
       ];
     }
   };
@@ -70,7 +70,11 @@ const Layout = ({ children, user }: LayoutProps) => {
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <img src={honeyLogo} alt="Honey" className="h-8 w-12 object-contain" />
+              <img
+                src={honeyLogo}
+                alt="Honey"
+                className="h-8 w-12 object-contain"
+              />
               <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                 Honey Store
               </h1>
@@ -95,17 +99,17 @@ const Layout = ({ children, user }: LayoutProps) => {
             {/* Cart and User Menu */}
             <div className="flex items-center space-x-4">
               {/* Cart Button - Only for clients */}
-              {user?.role === 'client' && (
-                <Button 
-                  variant="ghost" 
+              {user?.role === "client" && (
+                <Button
+                  variant="ghost"
                   size="icon"
-                  onClick={() => navigate('/cart')}
+                  onClick={() => navigate("/cart")}
                   className="relative"
                 >
                   <ShoppingCart className="h-5 w-5" />
                   {getTotalItems() > 0 && (
-                    <Badge 
-                      variant="destructive" 
+                    <Badge
+                      variant="destructive"
                       className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
                     >
                       {getTotalItems()}
@@ -117,10 +121,13 @@ const Layout = ({ children, user }: LayoutProps) => {
               {user && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full"
+                    >
                       <Avatar className="h-8 w-8 border border-primary/20">
                         <AvatarFallback className="bg-gradient-primary text-primary-foreground text-xs">
-                          {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                          {user.name?.charAt(0)?.toUpperCase() || "U"}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
@@ -129,14 +136,19 @@ const Layout = ({ children, user }: LayoutProps) => {
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
                         <p className="font-medium">{user.name}</p>
-                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {user.email}
+                        </p>
                         <Badge variant="secondary" className="w-fit text-xs">
                           {user.role}
                         </Badge>
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="text-destructive"
+                    >
                       <LogOut className="mr-2 h-4 w-4" />
                       Se déconnecter
                     </DropdownMenuItem>
@@ -151,7 +163,11 @@ const Layout = ({ children, user }: LayoutProps) => {
                 className="md:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                {isMobileMenuOpen ? (
+                  <X className="h-4 w-4" />
+                ) : (
+                  <Menu className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -182,9 +198,7 @@ const Layout = ({ children, user }: LayoutProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {children}
-      </main>
+      <main className="container mx-auto px-4 py-8">{children}</main>
     </div>
   );
 };

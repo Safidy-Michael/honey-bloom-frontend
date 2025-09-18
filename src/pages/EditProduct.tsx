@@ -75,25 +75,52 @@ const EditProduct = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label>Nom</Label>
-            <Input name="name" value={form.name} onChange={handleChange} required />
+            <Input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <Label>Description</Label>
-            <Input name="description" value={form.description} onChange={handleChange} />
+            <Input
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+            />
           </div>
           <div>
             <Label>Prix</Label>
-            <Input type="number" name="price" value={form.price} onChange={handleChange} required />
+            <Input
+              type="number"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <Label>Stock</Label>
-            <Input type="number" name="stock" value={form.stock} onChange={handleChange} required />
+            <Input
+              type="number"
+              name="stock"
+              value={form.stock}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <Label>Image URL</Label>
-            <Input name="imageUrl" value={form.imageUrl} onChange={handleChange} />
+            <Input
+              name="imageUrl"
+              value={form.imageUrl}
+              onChange={handleChange}
+            />
           </div>
-          <Button type="submit" className="w-full">Mettre à jour</Button>
+          <Button type="submit" className="w-full">
+            Mettre à jour
+          </Button>
         </form>
       </CardContent>
     </Card>

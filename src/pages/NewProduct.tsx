@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { apiClient } from "@/lib/api"; 
+import { apiClient } from "@/lib/api";
 
 const NewProduct = () => {
   const [form, setForm] = useState({
@@ -59,19 +59,41 @@ const NewProduct = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label>Nom</Label>
-            <Input name="name" value={form.name} onChange={handleChange} required />
+            <Input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <Label>Description</Label>
-            <Input name="description" value={form.description} onChange={handleChange} required />
+            <Input
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <Label>Prix</Label>
-            <Input type="number" name="price" value={form.price} onChange={handleChange} required />
+            <Input
+              type="number"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <Label>Stock</Label>
-            <Input type="number" name="stock" value={form.stock} onChange={handleChange} required />
+            <Input
+              type="number"
+              name="stock"
+              value={form.stock}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div>
             <Label>Image URL</Label>

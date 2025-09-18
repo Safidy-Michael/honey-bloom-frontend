@@ -1,18 +1,24 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { 
-  Package, 
-  ShoppingCart, 
-  TrendingUp, 
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Package,
+  ShoppingCart,
+  TrendingUp,
   Users,
   Plus,
-  Eye
-} from 'lucide-react';
-import { apiClient, Product, Order } from '@/lib/api';
-import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+  Eye,
+} from "lucide-react";
+import { apiClient, Product, Order } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -29,7 +35,7 @@ const Dashboard = () => {
     try {
       const [productsData, ordersData] = await Promise.all([
         apiClient.getProducts(),
-        apiClient.getOrders()
+        apiClient.getOrders(),
       ]);
       setProducts(productsData);
       setOrders(ordersData);
@@ -48,7 +54,7 @@ const Dashboard = () => {
     totalProducts: products.length,
     totalOrders: orders.length,
     totalRevenue: orders.reduce((sum, order) => sum + order.total, 0),
-    lowStockProducts: products.filter(p => p.stock < 10).length,
+    lowStockProducts: products.filter((p) => p.stock < 10).length,
   };
 
   if (isLoading) {
@@ -72,7 +78,7 @@ const Dashboard = () => {
             Vue d'ensemble de votre boutique Honey
           </p>
         </div>
-        <Button variant="gradient" onClick={() => navigate('/products/new')}>
+        <Button variant="gradient" onClick={() => navigate("/products/new")}>
           <Plus className="mr-2 h-4 w-4" />
           Nouveau produit
         </Button>
@@ -82,7 +88,9 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-border/40 hover:shadow-elegant transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Produits</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Produits
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -112,7 +120,9 @@ const Dashboard = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)}€</div>
+            <div className="text-2xl font-bold">
+              {stats.totalRevenue.toFixed(2)}€
+            </div>
             <p className="text-xs text-muted-foreground">
               +8% depuis le mois dernier
             </p>
@@ -125,7 +135,9 @@ const Dashboard = () => {
             <Package className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">{stats.lowStockProducts}</div>
+            <div className="text-2xl font-bold text-warning">
+              {stats.lowStockProducts}
+            </div>
             <p className="text-xs text-muted-foreground">
               Produits à réapprovisionner
             </p>
@@ -140,11 +152,13 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Produits récents</CardTitle>
-                <CardDescription>
-                  Derniers produits ajoutés
-                </CardDescription>
+                <CardDescription>Derniers produits ajoutés</CardDescription>
               </div>
-              <Button variant="outline" size="sm" onClick={() => navigate('/products')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/products")}
+              >
                 <Eye className="mr-2 h-4 w-4" />
                 Voir tous
               </Button>
@@ -166,7 +180,7 @@ const Dashboard = () => {
                     {product.badge && (
                       <Badge variant="secondary">{product.badge}</Badge>
                     )}
-                    <Badge 
+                    <Badge
                       variant={product.stock > 10 ? "default" : "destructive"}
                       className="text-xs"
                     >
@@ -185,11 +199,13 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Commandes récentes</CardTitle>
-                <CardDescription>
-                  Dernières commandes reçues
-                </CardDescription>
+                <CardDescription>Dernières commandes reçues</CardDescription>
               </div>
-              <Button variant="outline" size="sm" onClick={() => navigate('/orders')}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/orders")}
+              >
                 <Eye className="mr-2 h-4 w-4" />
                 Voir toutes
               </Button>
@@ -198,22 +214,29 @@ const Dashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {orders.slice(0, 5).map((order) => (
-                <div key={order.id} className="flex items-center justify-between">
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between"
+                >
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">
                       Commande #{order.id}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(order.createdAt).toLocaleDateString('fr-FR')}
+                      {new Date(order.createdAt).toLocaleDateString("fr-FR")}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Badge 
-                      variant={order.status === 'completed' ? 'default' : 'secondary'}
+                    <Badge
+                      variant={
+                        order.status === "completed" ? "default" : "secondary"
+                      }
                     >
                       {order.status}
                     </Badge>
-                    <span className="text-sm font-medium">{order.total.toFixed(2)} Ariary</span>
+                    <span className="text-sm font-medium">
+                      {order.total.toFixed(2)} Ariary
+                    </span>
                   </div>
                 </div>
               ))}

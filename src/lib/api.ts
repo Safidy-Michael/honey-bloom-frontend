@@ -1,7 +1,7 @@
 // API configuration and types for Honey API
 //const API_BASE_URL = 'http://localhost:3000';
 
-const API_BASE_URL = 'https://honey-api-c1ye.onrender.com'
+const API_BASE_URL = "https://honey-api-c1ye.onrender.com";
 
 // Types based on OpenAPI schema
 export interface User {
@@ -78,22 +78,25 @@ class ApiClient {
 
   constructor(baseUrl: string = API_BASE_URL) {
     this.baseUrl = baseUrl;
-    this.token = localStorage.getItem('auth_token');
+    this.token = localStorage.getItem("auth_token");
   }
 
   private getHeaders(): HeadersInit {
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+      headers["Authorization"] = `Bearer ${this.token}`;
     }
 
     return headers;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const response = await fetch(url, {
       ...options,
@@ -113,54 +116,59 @@ class ApiClient {
 
   // Auth methods
   async register(data: CreateAuthDto): Promise<User> {
-    return this.request<User>('/auth/register', {
-      method: 'POST',
+    return this.request<User>("/auth/register", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async login(data: LoginAuthDto): Promise<{ access_token: string; user: User }> {
-    const result = await this.request<{ access_token: string; user: User }>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+  async login(
+    data: LoginAuthDto,
+  ): Promise<{ access_token: string; user: User }> {
+    const result = await this.request<{ access_token: string; user: User }>(
+      "/auth/login",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      },
+    );
 
     this.token = result.access_token;
-    localStorage.setItem('auth_token', result.access_token);
-    localStorage.setItem('auth_user', JSON.stringify(result.user));
+    localStorage.setItem("auth_token", result.access_token);
+    localStorage.setItem("auth_user", JSON.stringify(result.user));
 
     if (import.meta.env.DEV) {
-      console.log('✅ Utilisateur connecté:', result.user);
+      console.log("✅ Utilisateur connecté:", result.user);
     }
 
     return result;
   }
 
   getUserFromStorage(): User | null {
-    const userStr = localStorage.getItem('auth_user');
+    const userStr = localStorage.getItem("auth_user");
     return userStr ? JSON.parse(userStr) : null;
   }
 
   async getProfile(): Promise<User> {
-    const profile = await this.request<User>('/auth/profile');
+    const profile = await this.request<User>("/auth/profile");
     if (import.meta.env.DEV) {
-      console.log('✅ Profil récupéré:', profile);
+      console.log("✅ Profil récupéré:", profile);
     }
     return profile;
   }
 
   logout(): void {
     this.token = null;
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_user');
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_user");
     if (import.meta.env.DEV) {
-      console.log('🔒 Utilisateur déconnecté');
+      console.log("🔒 Utilisateur déconnecté");
     }
   }
 
   // Products methods
   async getProducts(): Promise<Product[]> {
-    return this.request<Product[]>('/products');
+    return this.request<Product[]>("/products");
   }
 
   async getProduct(id: number): Promise<Product> {
@@ -168,26 +176,26 @@ class ApiClient {
   }
 
   async createProduct(data: CreateProductDto): Promise<Product> {
-    return this.request<Product>('/products', {
-      method: 'POST',
+    return this.request<Product>("/products", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async updateProduct(id: number, data: CreateProductDto): Promise<Product> {
     return this.request<Product>(`/products/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
   async deleteProduct(id: number): Promise<void> {
-    await this.request(`/products/${id}`, { method: 'DELETE' });
+    await this.request(`/products/${id}`, { method: "DELETE" });
   }
 
   // Orders methods
   async getOrders(): Promise<Order[]> {
-    return this.request<Order[]>('/orders');
+    return this.request<Order[]>("/orders");
   }
 
   async getOrder(id: number): Promise<Order> {
@@ -195,8 +203,8 @@ class ApiClient {
   }
 
   async createOrder(data: CreateOrderDto): Promise<Order> {
-    return this.request<Order>('/orders', {
-      method: 'POST',
+    return this.request<Order>("/orders", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   }
@@ -206,13 +214,13 @@ class ApiClient {
       console.log("📤 PATCH Order data:", data);
     }
     return this.request<Order>(`/orders/${id}`, {
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   }
 
   async deleteOrder(id: number): Promise<void> {
-    await this.request(`/orders/${id}`, { method: 'DELETE' });
+    await this.request(`/orders/${id}`, { method: "DELETE" });
   }
 
   isAuthenticated(): boolean {

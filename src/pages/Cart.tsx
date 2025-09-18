@@ -1,18 +1,31 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { ShoppingCart, Trash2, Plus, Minus, CreditCard } from 'lucide-react';
-import { useCart } from '@/contexts/CartContext';
-import { useToast } from '@/hooks/use-toast';
-import { apiClient } from '@/lib/api';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { ShoppingCart, Trash2, Plus, Minus, CreditCard } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { items, removeFromCart, updateQuantity, clearCart, getTotalPrice, getTotalItems } = useCart();
+  const {
+    items,
+    removeFromCart,
+    updateQuantity,
+    clearCart,
+    getTotalPrice,
+    getTotalItems,
+  } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const handleCheckout = async () => {
@@ -27,19 +40,19 @@ const Cart = () => {
 
     try {
       setIsCheckingOut(true);
-      
+
       // Get current user profile to get user ID
       const userProfile = await apiClient.getProfile();
-      
+
       // Create order with cart items
-      const orderItems = items.map(item => ({
+      const orderItems = items.map((item) => ({
         productId: item.product.id,
-        quantity: item.quantity
+        quantity: item.quantity,
       }));
 
       const order = await apiClient.createOrder({
         userId: userProfile.id,
-        items: orderItems
+        items: orderItems,
       });
 
       clearCart();
@@ -47,8 +60,8 @@ const Cart = () => {
         title: "Commande créée",
         description: `Votre commande #${order.id} a été créée avec succès.`,
       });
-      
-      navigate('/orders');
+
+      navigate("/orders");
     } catch (error) {
       toast({
         variant: "destructive",
@@ -69,15 +82,17 @@ const Cart = () => {
             Gérez vos articles et passez commande
           </p>
         </div>
-        
+
         <Card className="border-border/40">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <ShoppingCart className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Votre panier est vide</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              Votre panier est vide
+            </h3>
             <p className="text-muted-foreground text-center mb-4">
               Parcourez notre boutique et ajoutez des produits à votre panier.
             </p>
-            <Button variant="gradient" onClick={() => navigate('/shop')}>
+            <Button variant="gradient" onClick={() => navigate("/shop")}>
               Continuer mes achats
             </Button>
           </CardContent>
@@ -93,10 +108,11 @@ const Cart = () => {
         <div>
           <h1 className="text-3xl font-bold">Mon Panier</h1>
           <p className="text-muted-foreground">
-            {getTotalItems()} article{getTotalItems() > 1 ? 's' : ''} dans votre panier
+            {getTotalItems()} article{getTotalItems() > 1 ? "s" : ""} dans votre
+            panier
           </p>
         </div>
-        <Button variant="outline" onClick={() => navigate('/shop')}>
+        <Button variant="outline" onClick={() => navigate("/shop")}>
           Continuer mes achats
         </Button>
       </div>
@@ -111,14 +127,14 @@ const Cart = () => {
                   {/* Product Image */}
                   {item.product.imageUrl && (
                     <div className="w-20 h-20 rounded-md overflow-hidden bg-muted flex-shrink-0">
-                      <img 
-                        src={item.product.imageUrl} 
+                      <img
+                        src={item.product.imageUrl}
                         alt={item.product.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   )}
-                  
+
                   {/* Product Info */}
                   <div className="flex-1 space-y-2">
                     <div className="flex items-start justify-between">
@@ -142,7 +158,7 @@ const Cart = () => {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
-                    
+
                     {/* Quantity and Price */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
@@ -150,7 +166,9 @@ const Cart = () => {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity - 1)
+                          }
                           disabled={item.quantity <= 1}
                         >
                           <Minus className="h-4 w-4" />
@@ -172,19 +190,23 @@ const Cart = () => {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity + 1)
+                          }
                           disabled={item.quantity >= item.product.stock}
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+
                       <div className="text-right">
                         <div className="text-sm text-muted-foreground">
-                          {item.product.price.toFixed(2)}Ariary × {item.quantity}
+                          {item.product.price.toFixed(2)}Ariary ×{" "}
+                          {item.quantity}
                         </div>
                         <div className="font-semibold text-primary">
-                          {(item.product.price * item.quantity).toFixed(2)} Ariary
+                          {(item.product.price * item.quantity).toFixed(2)}{" "}
+                          Ariary
                         </div>
                       </div>
                     </div>
@@ -214,26 +236,24 @@ const Cart = () => {
                 <div className="border-t border-border pt-2">
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span className="text-primary">{getTotalPrice().toFixed(2)}€</span>
+                    <span className="text-primary">
+                      {getTotalPrice().toFixed(2)} Ariary
+                    </span>
                   </div>
                 </div>
               </div>
-              
-              <Button 
-                className="w-full" 
+
+              <Button
+                className="w-full"
                 variant="gradient"
                 onClick={handleCheckout}
                 disabled={isCheckingOut}
               >
                 <CreditCard className="mr-2 h-4 w-4" />
-                {isCheckingOut ? 'Traitement...' : 'Passer commande'}
+                {isCheckingOut ? "Traitement..." : "Passer commande"}
               </Button>
-              
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={clearCart}
-              >
+
+              <Button variant="outline" className="w-full" onClick={clearCart}>
                 Vider le panier
               </Button>
             </CardContent>

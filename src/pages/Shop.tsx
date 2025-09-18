@@ -1,19 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { ShoppingCart, Search, Package, Plus, Minus } from 'lucide-react';
-import { apiClient, Product } from '@/lib/api';
-import { useToast } from '@/hooks/use-toast';
-import { useCart } from '@/contexts/CartContext';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { ShoppingCart, Search, Package, Plus, Minus } from "lucide-react";
+import { apiClient, Product } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
 
 const Shop = () => {
   const { toast } = useToast();
   const { addToCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [quantities, setQuantities] = useState<Record<number, number>>({});
 
   useEffect(() => {
@@ -26,7 +32,7 @@ const Shop = () => {
       setProducts(data);
       // Initialize quantities for all products
       const initialQuantities: Record<number, number> = {};
-      data.forEach(product => {
+      data.forEach((product) => {
         initialQuantities[product.id] = 1;
       });
       setQuantities(initialQuantities);
@@ -51,7 +57,7 @@ const Shop = () => {
       });
       return;
     }
-    
+
     addToCart(product, quantity);
     toast({
       title: "Produit ajouté",
@@ -61,15 +67,16 @@ const Shop = () => {
 
   const updateQuantity = (productId: number, newQuantity: number) => {
     if (newQuantity < 1) return;
-    setQuantities(prev => ({
+    setQuantities((prev) => ({
       ...prev,
-      [productId]: newQuantity
+      [productId]: newQuantity,
     }));
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProducts = products.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (isLoading) {
@@ -113,19 +120,24 @@ const Shop = () => {
             <Package className="h-12 w-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">Aucun produit trouvé</h3>
             <p className="text-muted-foreground text-center mb-4">
-              {searchTerm ? 'Aucun produit ne correspond à votre recherche.' : 'Aucun produit disponible pour le moment.'}
+              {searchTerm
+                ? "Aucun produit ne correspond à votre recherche."
+                : "Aucun produit disponible pour le moment."}
             </p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredProducts.map((product) => (
-            <Card key={product.id} className="border-border/40 hover:shadow-elegant transition-shadow">
+            <Card
+              key={product.id}
+              className="border-border/40 hover:shadow-elegant transition-shadow"
+            >
               <CardHeader className="pb-3">
                 <div className="space-y-1">
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                   <CardDescription className="line-clamp-2">
-                    {product.description || 'Aucune description'}
+                    {product.description || "Aucune description"}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -133,8 +145,8 @@ const Shop = () => {
                 {/* Product Image */}
                 {product.imageUrl && (
                   <div className="aspect-video rounded-md overflow-hidden bg-muted">
-                    <img 
-                      src={product.imageUrl} 
+                    <img
+                      src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
@@ -144,10 +156,16 @@ const Shop = () => {
                 {/* Price and Stock */}
                 <div className="flex items-center justify-between">
                   <div className="text-2xl font-bold text-primary">
-                    {product.price.toFixed(2)}€
+                    {product.price.toFixed(2)} Ariary
                   </div>
-                  <Badge 
-                    variant={product.stock > 10 ? "default" : product.stock > 0 ? "warning" : "destructive"}
+                  <Badge
+                    variant={
+                      product.stock > 10
+                        ? "default"
+                        : product.stock > 0
+                          ? "warning"
+                          : "destructive"
+                    }
                   >
                     Stock: {product.stock}
                   </Badge>
@@ -168,7 +186,12 @@ const Shop = () => {
                       variant="outline"
                       size="icon"
                       className="h-8 w-8"
-                      onClick={() => updateQuantity(product.id, (quantities[product.id] || 1) - 1)}
+                      onClick={() =>
+                        updateQuantity(
+                          product.id,
+                          (quantities[product.id] || 1) - 1,
+                        )
+                      }
                       disabled={quantities[product.id] <= 1}
                     >
                       <Minus className="h-4 w-4" />
@@ -180,7 +203,12 @@ const Shop = () => {
                       variant="outline"
                       size="icon"
                       className="h-8 w-8"
-                      onClick={() => updateQuantity(product.id, (quantities[product.id] || 1) + 1)}
+                      onClick={() =>
+                        updateQuantity(
+                          product.id,
+                          (quantities[product.id] || 1) + 1,
+                        )
+                      }
                       disabled={quantities[product.id] >= product.stock}
                     >
                       <Plus className="h-4 w-4" />
@@ -189,14 +217,16 @@ const Shop = () => {
                 </div>
 
                 {/* Add to Cart Button */}
-                <Button 
-                  className="w-full" 
+                <Button
+                  className="w-full"
                   variant="gradient"
                   onClick={() => handleAddToCart(product)}
                   disabled={product.stock === 0}
                 >
                   <ShoppingCart className="mr-2 h-4 w-4" />
-                  {product.stock === 0 ? 'Rupture de stock' : 'Ajouter au panier'}
+                  {product.stock === 0
+                    ? "Rupture de stock"
+                    : "Ajouter au panier"}
                 </Button>
               </CardContent>
             </Card>

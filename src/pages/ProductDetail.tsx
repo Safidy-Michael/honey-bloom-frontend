@@ -33,10 +33,20 @@ const ProductDetail = () => {
         <CardTitle>{product.name}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <img src={product.imageUrl || "https://via.placeholder.com/150"} alt={product.name} className="w-full h-auto" />
-        <p><strong>Description:</strong> {product.description}</p>
-        <p><strong>Price:</strong> {product.price} Ariary</p>
-        <p><strong>Stock:</strong> {product.stock}</p>
+        <img
+          src={product.imageUrl || "https://via.placeholder.com/150"}
+          alt={product.name}
+          className="w-full h-auto"
+        />
+        <p>
+          <strong>Description:</strong> {product.description}
+        </p>
+        <p>
+          <strong>Price:</strong> {product.price} Ariary
+        </p>
+        <p>
+          <strong>Stock:</strong> {product.stock}
+        </p>
         <Link to="/products">
           <Button className="mt-3 w-full">Back to Products</Button>
         </Link>
