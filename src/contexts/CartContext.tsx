@@ -26,7 +26,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const existingItem = prevItems.find(
         (item) => item.product.id === product.id,
       );
-
       if (existingItem) {
         return prevItems.map((item) =>
           item.product.id === product.id
@@ -34,7 +33,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             : item,
         );
       }
-
       return [...prevItems, { product, quantity }];
     });
   };
@@ -46,11 +44,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateQuantity = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-
+    if (quantity <= 0) return removeFromCart(productId);
     setItems((prevItems) =>
       prevItems.map((item) =>
         item.product.id === productId ? { ...item, quantity } : item,
@@ -58,20 +52,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const clearCart = () => {
-    setItems([]);
-  };
+  const clearCart = () => setItems([]);
 
-  const getTotalItems = () => {
-    return items.reduce((total, item) => total + item.quantity, 0);
-  };
+  const getTotalItems = () =>
+    items.reduce((total, item) => total + item.quantity, 0);
 
-  const getTotalPrice = () => {
-    return items.reduce(
+  const getTotalPrice = () =>
+    items.reduce(
       (total, item) => total + item.product.price * item.quantity,
       0,
     );
-  };
 
   return (
     <CartContext.Provider
@@ -92,8 +82,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
+  if (!context) throw new Error("useCart must be used within a CartProvider");
   return context;
 };

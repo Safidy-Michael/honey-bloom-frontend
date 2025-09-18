@@ -23,18 +23,7 @@ import NewProduct from "./pages/NewProduct";
 import EditProduct from "./pages/EditProduct";
 import OrderDetails from "./pages/OrderDetails";
 import ProductDetail from "./pages/ProductDetail";
-
-export const AuthContext = createContext<{
-  user: User | null;
-  setUser: (user: User | null) => void;
-  isLoading: boolean;
-}>({
-  user: null,
-  setUser: () => {},
-  isLoading: true,
-});
-
-export const useAuth = () => useContext(AuthContext);
+import { AuthContext, useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
