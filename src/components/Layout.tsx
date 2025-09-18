@@ -21,12 +21,12 @@ import {
   X,
   Store,
 } from "lucide-react";
-import { apiClient } from "@/lib/api";
+import { apiClient, User } from "@/lib/api";
 import honeyLogo from "@/assets/honey-logo.png";
 
 interface LayoutProps {
   children: React.ReactNode;
-  user?: any;
+  user?: User;
 }
 
 const Layout = ({ children, user }: LayoutProps) => {
