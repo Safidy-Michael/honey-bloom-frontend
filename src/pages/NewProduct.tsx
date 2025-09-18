@@ -43,8 +43,14 @@ const NewProduct = () => {
       if (import.meta.env.DEV) {
         console.log("📌 Nouveau produit créé:", product);
       }
-    } catch (err: any) {
-      setError(err.message || "❌ Erreur lors de la création du produit");
+    } catch (err: unknown) {
+      let message = "❌ Erreur lors de la création du produit";
+
+      if (err instanceof Error) {
+        message = err.message;
+      }
+
+      setError(message);
     } finally {
       setLoading(false);
     }
