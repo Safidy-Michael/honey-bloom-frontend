@@ -33,7 +33,7 @@ const Shop = () => {
           initialQuantities[product.id] = 1;
         });
         setQuantities(initialQuantities);
-      } catch (error) {
+      } catch {
         toast({
           variant: "destructive",
           title: "Erreur",
@@ -56,7 +56,6 @@ const Shop = () => {
       });
       return;
     }
-
     addToCart(product, quantity);
     toast({
       title: "Produit ajouté",
@@ -66,10 +65,7 @@ const Shop = () => {
 
   const updateQuantity = (productId: number, newQuantity: number) => {
     if (newQuantity < 1) return;
-    setQuantities((prev) => ({
-      ...prev,
-      [productId]: newQuantity,
-    }));
+    setQuantities((prev) => ({ ...prev, [productId]: newQuantity }));
   };
 
   const filteredProducts = products.filter(
@@ -80,11 +76,22 @@ const Shop = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement des produits...</p>
-        </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0.2 }}
+            animate={{ opacity: [0.2, 0.6, 0.2] }}
+            transition={{ repeat: Infinity, duration: 1.2, delay: index * 0.1 }}
+          >
+            <Card className="border-border/40 animate-pulse">
+              <div className="h-48 bg-muted rounded-md mb-3"></div>
+              <div className="h-6 w-3/4 bg-muted rounded mb-2"></div>
+              <div className="h-4 w-1/2 bg-muted rounded mb-2"></div>
+              <div className="h-8 w-full bg-muted rounded"></div>
+            </Card>
+          </motion.div>
+        ))}
       </div>
     );
   }
@@ -128,10 +135,10 @@ const Shop = () => {
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, y: -30, rotate: -2 }}
-                animate={{ opacity: 1, y: 0, rotate: 0 }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: index * 0.1, type: "spring", stiffness: 250 }}
+                transition={{ delay: index * 0.05, type: "spring", stiffness: 250 }}
               >
                 <Card className="border-border/40 hover:shadow-elegant transition-shadow">
                   <CardHeader className="pb-3">
