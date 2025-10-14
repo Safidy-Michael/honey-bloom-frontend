@@ -13,7 +13,26 @@ import { apiClient, Product, Order } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
 
+const SkeletonCard = () => (
+  <motion.div
+    initial={{ opacity: 0.5 }}
+    animate={{ opacity: [0.5, 1, 0.5] }}
+    transition={{ duration: 1.2, repeat: Infinity }}
+  >
+    <Card className="border-border/40 animate-pulse">
+      <CardHeader className="pb-2">
+        <div className="h-5 bg-muted rounded w-1/2 mb-2"></div>
+        <div className="h-4 bg-muted rounded w-1/4"></div>
+      </CardHeader>
+      <CardContent>
+        <div className="h-8 bg-muted rounded mb-2"></div>
+        <div className="h-3 bg-muted rounded w-3/4"></div>
+      </CardContent>
+    </Card>
+  </motion.div>
+);
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
@@ -29,19 +48,14 @@ const ClientDashboard = () => {
         apiClient.getProducts(),
         apiClient.getOrders(),
       ]);
-
       setProducts(productsData.slice(0, 6));
-
-      const userOrders = ordersData.filter(
-        (order) => order.userId === user?.id,
-      );
+      const userOrders = ordersData.filter((order) => order.userId === user?.id);
       setMyOrders(
         userOrders.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        ),
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
       );
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -56,24 +70,28 @@ const ClientDashboard = () => {
     loadDashboardData();
   }, [loadDashboardData]);
 
+  const totalOrders = myOrders.length;
+  const totalSpent = myOrders.reduce((sum, order) => sum + order.total, 0);
+  const recentOrder = myOrders[0];
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement...</p>
+      <div className="space-y-6">
+        <div className="flex gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <SkeletonCard />
+          <SkeletonCard />
         </div>
       </div>
     );
   }
 
-  const totalOrders = myOrders.length;
-  const totalSpent = myOrders.reduce((sum, order) => sum + order.total, 0);
-  const recentOrder = myOrders[0];
-
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
@@ -89,7 +107,6 @@ const ClientDashboard = () => {
         </Button>
       </div>
 
-      {/* Statistics Cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="border-border/40 hover:shadow-elegant transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -117,16 +134,12 @@ const ClientDashboard = () => {
 
         <Card className="border-border/40 hover:shadow-elegant transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Dernière Commande
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Dernière Commande</CardTitle>
             <Heart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">
-              {recentOrder
-                ? `${recentOrder.total.toFixed(2)} Ariary`
-                : "Aucune"}
+              {recentOrder ? `${recentOrder.total.toFixed(2)} Ariary` : "Aucune"}
             </div>
             <p className="text-xs text-muted-foreground">
               {recentOrder
@@ -137,23 +150,15 @@ const ClientDashboard = () => {
         </Card>
       </div>
 
-      {/* Content Sections */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Featured Products */}
         <Card className="border-border/40">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Produits Populaires</CardTitle>
-                <CardDescription>
-                  Découvrez nos meilleures ventes
-                </CardDescription>
+                <CardDescription>Découvrez nos meilleures ventes</CardDescription>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/shop")}
-              >
+              <Button variant="outline" size="sm" onClick={() => navigate("/shop")}>
                 <Eye className="mr-2 h-4 w-4" />
                 Voir tout
               </Button>
@@ -161,8 +166,11 @@ const ClientDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {products.map((product) => (
-              <div
+              <motion.div
                 key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
                 className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
               >
                 <div className="flex-1">
@@ -172,21 +180,18 @@ const ClientDashboard = () => {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-primary">
-                    {product.price.toFixed(2)} Arriary
-                  </p>
+                  <p className="font-bold text-primary">{product.price.toFixed(2)} Arriary</p>
                   {product.badge && (
                     <Badge variant="secondary" className="text-xs">
                       {product.badge}
                     </Badge>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </CardContent>
         </Card>
 
-        {/* My Recent Orders */}
         <Card className="border-border/40">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -194,11 +199,7 @@ const ClientDashboard = () => {
                 <CardTitle>Mes Commandes Récentes</CardTitle>
                 <CardDescription>Vos 5 dernières commandes</CardDescription>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/orders")}
-              >
+              <Button variant="outline" size="sm" onClick={() => navigate("/orders")}>
                 <Eye className="mr-2 h-4 w-4" />
                 Voir tout
               </Button>
@@ -209,9 +210,7 @@ const ClientDashboard = () => {
               <div className="text-center py-8">
                 <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-medium mb-2">Aucune commande</h3>
-                <p className="text-muted-foreground mb-4">
-                  Vous n'avez pas encore passé de commande
-                </p>
+                <p className="text-muted-foreground mb-4">Vous n'avez pas encore passé de commande</p>
                 <Button onClick={() => navigate("/shop")}>
                   <Plus className="mr-2 h-4 w-4" />
                   Commencer vos achats
@@ -219,27 +218,24 @@ const ClientDashboard = () => {
               </div>
             ) : (
               myOrders.slice(0, 5).map((order) => (
-                <div
+                <motion.div
                   key={order.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                   className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                 >
                   <div className="flex-1">
                     <h4 className="font-medium">Commande #{order.id}</h4>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(order.createdAt).toLocaleDateString("fr-FR")} •{" "}
-                      {order.orderItems.length} article
-                      {order.orderItems.length > 1 ? "s" : ""}
+                      {new Date(order.createdAt).toLocaleDateString("fr-FR")} • {order.orderItems.length} article{order.orderItems.length > 1 ? "s" : ""}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-primary">
-                      {order.total.toFixed(2)} Ariary
-                    </p>
-                    <Badge variant="secondary" className="text-xs">
-                      {order.status}
-                    </Badge>
+                    <p className="font-medium text-primary">{order.total.toFixed(2)} Ariary</p>
+                    <Badge variant="secondary" className="text-xs">{order.status}</Badge>
                   </div>
-                </div>
+                </motion.div>
               ))
             )}
           </CardContent>
