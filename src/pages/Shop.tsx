@@ -13,7 +13,7 @@ import { ShoppingCart, Search, Package, Plus, Minus } from "lucide-react";
 import { apiClient, Product } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Shop = () => {
   const { toast } = useToast();
@@ -91,7 +91,6 @@ const Shop = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Boutique</h1>
@@ -101,7 +100,6 @@ const Shop = () => {
         </div>
       </div>
 
-      {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
@@ -112,7 +110,6 @@ const Shop = () => {
         />
       </div>
 
-      {/* Products Grid */}
       {filteredProducts.length === 0 ? (
         <Card className="border-border/40">
           <CardContent className="flex flex-col items-center justify-center py-16">
@@ -127,105 +124,111 @@ const Shop = () => {
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProducts.map((product) => (
-            <Card
-              key={product.id}
-              className="border-border/40 hover:shadow-elegant transition-shadow"
-            >
-              <CardHeader className="pb-3">
-                <div className="space-y-1">
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
-                  <CardDescription className="line-clamp-2">
-                    {product.description || "Aucune description"}
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Product Image */}
-                {product.imageUrl && (
-                  <motion.div
-                    className="aspect-video rounded-md overflow-hidden bg-muted"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.div>
-                )}
-
-                {/* Price and Stock */}
-                <div className="flex items-center justify-between">
-                  <div className="text-2xl font-bold text-primary">
-                    {product.price.toFixed(2)} Ariary
-                  </div>
-                  <Badge
-                    variant={
-                      product.stock > 10
-                        ? "default"
-                        : product.stock > 0
-                        ? "warning"
-                        : "destructive"
-                    }
-                  >
-                    Stock: {product.stock}
-                  </Badge>
-                </div>
-
-                {/* Badge */}
-                {product.badge && (
-                  <Badge variant="secondary" className="w-fit">
-                    {product.badge}
-                  </Badge>
-                )}
-
-                {/* Quantity Selector */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Quantité:</span>
-                  <div className="flex items-center space-x-2">
+          <AnimatePresence>
+            {filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: -30, rotate: -2 }}
+                animate={{ opacity: 1, y: 0, rotate: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ delay: index * 0.1, type: "spring", stiffness: 250 }}
+              >
+                <Card className="border-border/40 hover:shadow-elegant transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg">{product.name}</CardTitle>
+                      <CardDescription className="line-clamp-2">
+                        {product.description || "Aucune description"}
+                      </CardDescription>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {product.imageUrl && (
+                      <motion.div
+                        className="aspect-video rounded-md overflow-hidden bg-muted"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </motion.div>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <div className="text-2xl font-bold text-primary">
+                        {product.price.toFixed(2)} Ariary
+                      </div>
+                      <Badge
+                        variant={
+                          product.stock > 10
+                            ? "default"
+                            : product.stock > 0
+                            ? "warning"
+                            : "destructive"
+                        }
+                      >
+                        Stock: {product.stock}
+                      </Badge>
+                    </div>
+                    {product.badge && (
+                      <Badge variant="secondary" className="w-fit">
+                        {product.badge}
+                      </Badge>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Quantité:</span>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            updateQuantity(
+                              product.id,
+                              (quantities[product.id] || 1) - 1
+                            )
+                          }
+                          disabled={quantities[product.id] <= 1}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="w-8 text-center font-medium">
+                          {quantities[product.id] || 1}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            updateQuantity(
+                              product.id,
+                              (quantities[product.id] || 1) + 1
+                            )
+                          }
+                          disabled={quantities[product.id] >= product.stock}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                     <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() =>
-                        updateQuantity(product.id, (quantities[product.id] || 1) - 1)
-                      }
-                      disabled={quantities[product.id] <= 1}
+                      className="w-full"
+                      variant="gradient"
+                      onClick={() => handleAddToCart(product)}
+                      disabled={product.stock === 0}
                     >
-                      <Minus className="h-4 w-4" />
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      {product.stock === 0
+                        ? "Rupture de stock"
+                        : "Ajouter au panier"}
                     </Button>
-                    <span className="w-8 text-center font-medium">
-                      {quantities[product.id] || 1}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() =>
-                        updateQuantity(product.id, (quantities[product.id] || 1) + 1)
-                      }
-                      disabled={quantities[product.id] >= product.stock}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Add to Cart Button */}
-                <Button
-                  className="w-full"
-                  variant="gradient"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={product.stock === 0}
-                >
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  {product.stock === 0 ? "Rupture de stock" : "Ajouter au panier"}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </div>
