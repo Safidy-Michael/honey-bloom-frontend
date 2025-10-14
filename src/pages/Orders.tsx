@@ -65,7 +65,7 @@ const Orders = () => {
     loadOrders();
   }, [loadOrders]);
 
-  const handleDeleteOrder = async (id: number) => {
+  const handleDeleteOrder = async (id) => {
     if (user?.role !== "admin") {
       toast({
         variant: "destructive",

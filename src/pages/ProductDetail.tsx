@@ -16,8 +16,8 @@ const ProductDetail = () => {
       try {
         const data = await apiClient.getProduct(id!);
         setProduct(data);
-      } catch (err) {
-        console.error("❌ Error fetching product:", err);
+      } catch {
+        setProduct(null);
       } finally {
         setLoading(false);
       }

@@ -24,7 +24,7 @@ const OrderDetails = () => {
 
   const fetchOrder = useCallback(async () => {
     try {
-      const data = await apiClient.getOrder(Number(id));
+      const data = await apiClient.getOrder(id);
       setOrder(data);
       setStatus(data.status);
     } catch (err: unknown) {
@@ -38,7 +38,7 @@ const OrderDetails = () => {
 
   const updateStatus = async () => {
     try {
-      await apiClient.patchOrder(Number(id), { status });
+      await apiClient.patchOrder(id, { status });
       alert("✅ Statut mis à jour !");
 
       fetchOrder();

@@ -141,24 +141,21 @@ const Shop = () => {
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ delay: index * 0.05, type: "spring", stiffness: 250 }}
               >
-                <Card className="border-border/40 hover:shadow-elegant transition-shadow">
-                  <CardHeader className="pb-3 flex justify-between items-start">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg relative">
-                        {product.name}
-                        <Link to={`/products/${product.id}`}>
-                          <motion.div
-                            whileHover={{ scale: 1.2, rotate: 10 }}
-                            className="absolute top-0 right-0 p-1 rounded-full bg-muted/50 cursor-pointer"
-                          >
-                            <Eye className="h-5 w-5 text-primary" />
-                          </motion.div>
-                        </Link>
-                      </CardTitle>
-                      <CardDescription className="line-clamp-2">
-                        {product.description || "No description"}
-                      </CardDescription>
-                    </div>
+                <Card className="border-border/40 hover:shadow-elegant transition-shadow relative">
+                  <Link to={`/products/${product.id}`} className="absolute top-3 right-3 z-10">
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 10 }}
+                      transition={{ type: "spring", stiffness: 200 }}
+                      className="p-2 rounded-full bg-background/60 backdrop-blur cursor-pointer"
+                    >
+                      <Eye className="h-5 w-5 text-primary" />
+                    </motion.div>
+                  </Link>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">{product.name}</CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {product.description || "No description"}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {product.imageUrl && (
@@ -190,11 +187,6 @@ const Shop = () => {
                         Stock: {product.stock}
                       </Badge>
                     </div>
-                    {product.badge && (
-                      <Badge variant="secondary" className="w-fit">
-                        {product.badge}
-                      </Badge>
-                    )}
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Quantity:</span>
                       <div className="flex items-center space-x-2">

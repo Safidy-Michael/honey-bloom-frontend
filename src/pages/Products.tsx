@@ -26,7 +26,7 @@ import {
 import { apiClient, Product } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion"; 
+import { motion, AnimatePresence } from "framer-motion";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -56,7 +56,6 @@ const Products = () => {
 
   const handleDeleteProduct = async (id: string) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) return;
-
     try {
       await apiClient.deleteProduct(id);
       setProducts(products.filter((p) => p.id !== id));
@@ -84,7 +83,7 @@ const Products = () => {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement des produits...</p>
+          <p className="text-muted-foreground">Chargement...</p>
         </div>
       </div>
     );
@@ -92,7 +91,6 @@ const Products = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Produits</h1>
@@ -104,7 +102,6 @@ const Products = () => {
         </Button>
       </div>
 
-      {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
@@ -115,7 +112,6 @@ const Products = () => {
         />
       </div>
 
-      {/* Products Grid */}
       {filteredProducts.length === 0 ? (
         <Card className="border-border/40">
           <CardContent className="flex flex-col items-center justify-center py-16">
@@ -181,7 +177,6 @@ const Products = () => {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Product Image */}
                     {product.imageUrl && (
                       <motion.div
                         className="aspect-video rounded-md overflow-hidden bg-muted"
@@ -195,8 +190,6 @@ const Products = () => {
                         />
                       </motion.div>
                     )}
-
-                    {/* Price and Stock */}
                     <div className="flex items-center justify-between">
                       <div className="text-2xl font-bold text-primary">
                         {product.price.toFixed(2)} Ariary
@@ -213,15 +206,11 @@ const Products = () => {
                         Stock: {product.stock}
                       </Badge>
                     </div>
-
-                    {/* Badge */}
                     {product.badge && (
                       <Badge variant="secondary" className="w-fit">
                         {product.badge}
                       </Badge>
                     )}
-
-                    {/* Dates */}
                     <div className="text-xs text-muted-foreground">
                       Créé le{" "}
                       {new Date(product.createdAt).toLocaleDateString("fr-FR")}

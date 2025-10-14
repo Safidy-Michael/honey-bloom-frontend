@@ -24,7 +24,7 @@ const EditProduct = () => {
 
     const fetchProduct = async () => {
       try {
-        const product: Product = await apiClient.getProduct(Number(id));
+        const product: Product = await apiClient.getProduct(id);
         setForm({
           name: product.name,
           description: product.description || "",
@@ -55,7 +55,7 @@ const EditProduct = () => {
     e.preventDefault();
 
     try {
-      await apiClient.updateProduct(Number(id), form);
+      await apiClient.updateProduct(id, form);
       alert("✅ Produit mis à jour !");
       navigate(`/products/${id}`);
     } catch (err) {
