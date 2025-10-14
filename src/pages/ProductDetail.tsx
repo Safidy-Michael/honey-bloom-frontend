@@ -25,11 +25,20 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
-  if (loading) return <p className="text-center mt-10">Chargement...</p>;
+  if (loading)
+    return (
+      <div className="max-w-3xl mx-auto mt-10 grid gap-4 animate-pulse">
+        <div className="h-64 bg-muted rounded-md"></div>
+        <div className="h-8 w-3/4 bg-muted rounded"></div>
+        <div className="h-4 w-1/2 bg-muted rounded"></div>
+        <div className="h-12 bg-muted rounded"></div>
+      </div>
+    );
+
   if (!product)
     return (
-      <p className="text-center mt-10 text-destructive">
-        Produit non trouvé
+      <p className="text-center mt-10 text-destructive text-lg font-semibold">
+        Product not found
       </p>
     );
 
@@ -71,7 +80,7 @@ const ProductDetail = () => {
             className="w-full"
             onClick={() => navigate("/shop")}
           >
-            Retour à la boutique
+            Back to Shop
           </Button>
         </CardContent>
       </Card>
