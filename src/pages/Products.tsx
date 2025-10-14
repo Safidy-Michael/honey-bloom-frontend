@@ -39,7 +39,7 @@ const Products = () => {
     try {
       const data = await apiClient.getProducts();
       setProducts(data);
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -54,7 +54,7 @@ const Products = () => {
     loadProducts();
   }, [loadProducts]);
 
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = async (id: string) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) return;
 
     try {
@@ -64,7 +64,7 @@ const Products = () => {
         title: "Produit supprimé",
         description: "Le produit a été supprimé avec succès.",
       });
-    } catch (error) {
+    } catch {
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -96,9 +96,7 @@ const Products = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Produits</h1>
-          <p className="text-muted-foreground">
-            Gérez votre catalogue de produits
-          </p>
+          <p className="text-muted-foreground">Gérez votre catalogue de produits</p>
         </div>
         <Button variant="gradient" onClick={() => navigate("/products/new")}>
           <Plus className="mr-2 h-4 w-4" />
@@ -128,10 +126,7 @@ const Products = () => {
                 ? "Aucun produit ne correspond à votre recherche."
                 : "Commencez par ajouter votre premier produit."}
             </p>
-            <Button
-              variant="gradient"
-              onClick={() => navigate("/products/new")}
-            >
+            <Button variant="gradient" onClick={() => navigate("/products/new")}>
               <Plus className="mr-2 h-4 w-4" />
               Ajouter un produit
             </Button>
@@ -148,9 +143,7 @@ const Products = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card
-                  className="border-border/40 hover:shadow-elegant transition-shadow group"
-                >
+                <Card className="border-border/40 hover:shadow-elegant transition-shadow group">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="space-y-1 flex-1">
@@ -171,9 +164,7 @@ const Products = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() =>
-                              navigate(`/products/${product.id}/edit`)
-                            }
+                            onClick={() => navigate(`/products/${product.id}/edit`)}
                           >
                             <Edit className="mr-2 h-4 w-4" />
                             Modifier

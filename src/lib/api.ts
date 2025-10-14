@@ -3,9 +3,10 @@
 
 const API_BASE_URL = "https://honey-api-c1ye.onrender.com";
 
+
 // Types based on OpenAPI schema
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   role: string;
@@ -24,7 +25,7 @@ export interface LoginAuthDto {
 }
 
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -45,16 +46,16 @@ export interface CreateProductDto {
 }
 
 export interface OrderItem {
-  id: number;
-  orderId: number;
-  productId: number;
+  id: string;
+  orderId: string;
+  productId: string;
   quantity: number;
   price: number;
 }
 
 export interface Order {
-  id: number;
-  userId: number;
+  id: string;
+  userId: string;
   total: number;
   status: string;
   createdAt: string;
@@ -62,12 +63,12 @@ export interface Order {
 }
 
 export interface CreateOrderItemDto {
-  productId: number;
+  productId: string;
   quantity: number;
 }
 
 export interface CreateOrderDto {
-  userId: number;
+  userId: string;
   items: CreateOrderItemDto[];
 }
 
@@ -171,7 +172,7 @@ class ApiClient {
     return this.request<Product[]>("/products");
   }
 
-  async getProduct(id: number): Promise<Product> {
+  async getProduct(id: string): Promise<Product> {
     return this.request<Product>(`/products/${id}`);
   }
 
@@ -182,14 +183,14 @@ class ApiClient {
     });
   }
 
-  async updateProduct(id: number, data: CreateProductDto): Promise<Product> {
+  async updateProduct(id: string, data: CreateProductDto): Promise<Product> {
     return this.request<Product>(`/products/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   }
 
-  async deleteProduct(id: number): Promise<void> {
+  async deleteProduct(id: string): Promise<void> {
     await this.request(`/products/${id}`, { method: "DELETE" });
   }
 
@@ -198,7 +199,7 @@ class ApiClient {
     return this.request<Order[]>("/orders");
   }
 
-  async getOrder(id: number): Promise<Order> {
+  async getOrder(id: string): Promise<Order> {
     return this.request<Order>(`/orders/${id}`);
   }
 
@@ -209,7 +210,7 @@ class ApiClient {
     });
   }
 
-  async patchOrder(id: number, data: Partial<Order>): Promise<Order> {
+  async patchOrder(id: string, data: Partial<Order>): Promise<Order> {
     if (import.meta.env.DEV) {
       console.log("📤 PATCH Order data:", data);
     }
@@ -219,7 +220,7 @@ class ApiClient {
     });
   }
 
-  async deleteOrder(id: number): Promise<void> {
+  async deleteOrder(id: string): Promise<void> {
     await this.request(`/orders/${id}`, { method: "DELETE" });
   }
 

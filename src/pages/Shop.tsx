@@ -9,11 +9,12 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ShoppingCart, Search, Package, Plus, Minus } from "lucide-react";
+import { ShoppingCart, Search, Plus, Minus, Eye, Package } from "lucide-react";
 import { apiClient, Product } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Shop = () => {
   const { toast } = useToast();
@@ -63,7 +64,7 @@ const Shop = () => {
     });
   };
 
-  const updateQuantity = (productId: number, newQuantity: number) => {
+  const updateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     setQuantities((prev) => ({ ...prev, [productId]: newQuantity }));
   };
@@ -135,19 +136,27 @@ const Shop = () => {
             {filteredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ delay: index * 0.05, type: "spring", stiffness: 250 }}
               >
                 <Card className="border-border/40 hover:shadow-elegant transition-shadow">
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-3 flex justify-between items-start">
                     <div className="space-y-1">
                       <CardTitle className="text-lg">{product.name}</CardTitle>
                       <CardDescription className="line-clamp-2">
                         {product.description || "Aucune description"}
                       </CardDescription>
                     </div>
+                    <Link to={`/products/${product.id}`}>
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: 10 }}
+                        className="p-1 rounded-full bg-muted/50 cursor-pointer"
+                      >
+                        <Eye className="h-5 w-5 text-primary" />
+                      </motion.div>
+                    </Link>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {product.imageUrl && (
