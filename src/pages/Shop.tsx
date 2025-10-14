@@ -13,6 +13,7 @@ import { ShoppingCart, Search, Package, Plus, Minus } from "lucide-react";
 import { apiClient, Product } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { motion } from "framer-motion";
 
 const Shop = () => {
   const { toast } = useToast();
@@ -45,27 +46,6 @@ const Shop = () => {
     loadProducts();
   }, [toast]);
 
-  const loadProducts = async () => {
-    try {
-      const data = await apiClient.getProducts();
-      setProducts(data);
-      // Initialize quantities for all products
-      const initialQuantities: Record<number, number> = {};
-      data.forEach((product) => {
-        initialQuantities[product.id] = 1;
-      });
-      setQuantities(initialQuantities);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de charger les produits.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleAddToCart = (product: Product) => {
     const quantity = quantities[product.id] || 1;
     if (quantity > product.stock) {
@@ -95,7 +75,7 @@ const Shop = () => {
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) {
@@ -163,13 +143,17 @@ const Shop = () => {
               <CardContent className="space-y-4">
                 {/* Product Image */}
                 {product.imageUrl && (
-                  <div className="aspect-video rounded-md overflow-hidden bg-muted">
+                  <motion.div
+                    className="aspect-video rounded-md overflow-hidden bg-muted"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <img
                       src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Price and Stock */}
@@ -182,8 +166,8 @@ const Shop = () => {
                       product.stock > 10
                         ? "default"
                         : product.stock > 0
-                          ? "warning"
-                          : "destructive"
+                        ? "warning"
+                        : "destructive"
                     }
                   >
                     Stock: {product.stock}
@@ -206,10 +190,7 @@ const Shop = () => {
                       size="icon"
                       className="h-8 w-8"
                       onClick={() =>
-                        updateQuantity(
-                          product.id,
-                          (quantities[product.id] || 1) - 1,
-                        )
+                        updateQuantity(product.id, (quantities[product.id] || 1) - 1)
                       }
                       disabled={quantities[product.id] <= 1}
                     >
@@ -223,10 +204,7 @@ const Shop = () => {
                       size="icon"
                       className="h-8 w-8"
                       onClick={() =>
-                        updateQuantity(
-                          product.id,
-                          (quantities[product.id] || 1) + 1,
-                        )
+                        updateQuantity(product.id, (quantities[product.id] || 1) + 1)
                       }
                       disabled={quantities[product.id] >= product.stock}
                     >
@@ -243,9 +221,7 @@ const Shop = () => {
                   disabled={product.stock === 0}
                 >
                   <ShoppingCart className="mr-2 h-4 w-4" />
-                  {product.stock === 0
-                    ? "Rupture de stock"
-                    : "Ajouter au panier"}
+                  {product.stock === 0 ? "Rupture de stock" : "Ajouter au panier"}
                 </Button>
               </CardContent>
             </Card>
