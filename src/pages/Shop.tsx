@@ -22,14 +22,14 @@ const Shop = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
         const data = await apiClient.getProducts();
         setProducts(data);
-        const initialQuantities: Record<number, number> = {};
+        const initialQuantities: Record<string, number> = {};
         data.forEach((product) => {
           initialQuantities[product.id] = 1;
         });
@@ -37,8 +37,8 @@ const Shop = () => {
       } catch {
         toast({
           variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger les produits.",
+          title: "Error",
+          description: "Unable to load products.",
         });
       } finally {
         setIsLoading(false);
@@ -52,15 +52,15 @@ const Shop = () => {
     if (quantity > product.stock) {
       toast({
         variant: "destructive",
-        title: "Stock insuffisant",
-        description: "La quantité demandée dépasse le stock disponible.",
+        title: "Insufficient stock",
+        description: "Requested quantity exceeds available stock.",
       });
       return;
     }
     addToCart(product, quantity);
     toast({
-      title: "Produit ajouté",
-      description: `${product.name} (x${quantity}) ajouté au panier.`,
+      title: "Product added",
+      description: `${product.name} (x${quantity}) added to cart.`,
     });
   };
 
@@ -101,9 +101,9 @@ const Shop = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Boutique</h1>
+          <h1 className="text-3xl font-bold">Shop</h1>
           <p className="text-muted-foreground">
-            Découvrez nos produits et ajoutez-les à votre panier
+            Browse our products and add them to your cart
           </p>
         </div>
       </div>
@@ -111,7 +111,7 @@ const Shop = () => {
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Rechercher des produits..."
+          placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
@@ -122,11 +122,11 @@ const Shop = () => {
         <Card className="border-border/40">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <Package className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Aucun produit trouvé</h3>
+            <h3 className="text-lg font-semibold mb-2">No products found</h3>
             <p className="text-muted-foreground text-center mb-4">
               {searchTerm
-                ? "Aucun produit ne correspond à votre recherche."
-                : "Aucun produit disponible pour le moment."}
+                ? "No products match your search."
+                : "No products available at the moment."}
             </p>
           </CardContent>
         </Card>
@@ -144,19 +144,21 @@ const Shop = () => {
                 <Card className="border-border/40 hover:shadow-elegant transition-shadow">
                   <CardHeader className="pb-3 flex justify-between items-start">
                     <div className="space-y-1">
-                      <CardTitle className="text-lg">{product.name}</CardTitle>
+                      <CardTitle className="text-lg relative">
+                        {product.name}
+                        <Link to={`/products/${product.id}`}>
+                          <motion.div
+                            whileHover={{ scale: 1.2, rotate: 10 }}
+                            className="absolute top-0 right-0 p-1 rounded-full bg-muted/50 cursor-pointer"
+                          >
+                            <Eye className="h-5 w-5 text-primary" />
+                          </motion.div>
+                        </Link>
+                      </CardTitle>
                       <CardDescription className="line-clamp-2">
-                        {product.description || "Aucune description"}
+                        {product.description || "No description"}
                       </CardDescription>
                     </div>
-                    <Link to={`/products/${product.id}`}>
-                      <motion.div
-                        whileHover={{ scale: 1.2, rotate: 10 }}
-                        className="p-1 rounded-full bg-muted/50 cursor-pointer"
-                      >
-                        <Eye className="h-5 w-5 text-primary" />
-                      </motion.div>
-                    </Link>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {product.imageUrl && (
@@ -194,7 +196,7 @@ const Shop = () => {
                       </Badge>
                     )}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Quantité:</span>
+                      <span className="text-sm font-medium">Quantity:</span>
                       <div className="flex items-center space-x-2">
                         <Button
                           variant="outline"
@@ -236,9 +238,7 @@ const Shop = () => {
                       disabled={product.stock === 0}
                     >
                       <ShoppingCart className="mr-2 h-4 w-4" />
-                      {product.stock === 0
-                        ? "Rupture de stock"
-                        : "Ajouter au panier"}
+                      {product.stock === 0 ? "Out of stock" : "Add to cart"}
                     </Button>
                   </CardContent>
                 </Card>
