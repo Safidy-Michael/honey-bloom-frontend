@@ -26,6 +26,7 @@ import {
 import { apiClient, Product } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion"; 
 
 const Products = () => {
   const navigate = useNavigate();
@@ -75,7 +76,7 @@ const Products = () => {
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchTerm.toLowerCase()),
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) {
@@ -138,92 +139,107 @@ const Products = () => {
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProducts.map((product) => (
-            <Card
-              key={product.id}
-              className="border-border/40 hover:shadow-elegant transition-shadow group"
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1 flex-1">
-                    <CardTitle className="text-lg">{product.name}</CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {product.description || "Aucune description"}
-                    </CardDescription>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+          <AnimatePresence>
+            {filteredProducts.map((product) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card
+                  className="border-border/40 hover:shadow-elegant transition-shadow group"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1 flex-1">
+                        <CardTitle className="text-lg">{product.name}</CardTitle>
+                        <CardDescription className="line-clamp-2">
+                          {product.description || "Aucune description"}
+                        </CardDescription>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() =>
+                              navigate(`/products/${product.id}/edit`)
+                            }
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Modifier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => handleDeleteProduct(product.id)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Supprimer
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Product Image */}
+                    {product.imageUrl && (
+                      <motion.div
+                        className="aspect-video rounded-md overflow-hidden bg-muted"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => navigate(`/products/${product.id}/edit`)}
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </motion.div>
+                    )}
+
+                    {/* Price and Stock */}
+                    <div className="flex items-center justify-between">
+                      <div className="text-2xl font-bold text-primary">
+                        {product.price.toFixed(2)} Ariary
+                      </div>
+                      <Badge
+                        variant={
+                          product.stock > 10
+                            ? "default"
+                            : product.stock > 0
+                            ? "warning"
+                            : "destructive"
+                        }
                       >
-                        <Edit className="mr-2 h-4 w-4" />
-                        Modifier
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Supprimer
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Product Image */}
-                {product.imageUrl && (
-                  <div className="aspect-video rounded-md overflow-hidden bg-muted">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+                        Stock: {product.stock}
+                      </Badge>
+                    </div>
 
-                {/* Price and Stock */}
-                <div className="flex items-center justify-between">
-                  <div className="text-2xl font-bold text-primary">
-                    {product.price.toFixed(2)} Ariary
-                  </div>
-                  <Badge
-                    variant={
-                      product.stock > 10
-                        ? "default"
-                        : product.stock > 0
-                          ? "warning"
-                          : "destructive"
-                    }
-                  >
-                    Stock: {product.stock}
-                  </Badge>
-                </div>
+                    {/* Badge */}
+                    {product.badge && (
+                      <Badge variant="secondary" className="w-fit">
+                        {product.badge}
+                      </Badge>
+                    )}
 
-                {/* Badge */}
-                {product.badge && (
-                  <Badge variant="secondary" className="w-fit">
-                    {product.badge}
-                  </Badge>
-                )}
-
-                {/* Dates */}
-                <div className="text-xs text-muted-foreground">
-                  Créé le{" "}
-                  {new Date(product.createdAt).toLocaleDateString("fr-FR")}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    {/* Dates */}
+                    <div className="text-xs text-muted-foreground">
+                      Créé le{" "}
+                      {new Date(product.createdAt).toLocaleDateString("fr-FR")}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </div>
