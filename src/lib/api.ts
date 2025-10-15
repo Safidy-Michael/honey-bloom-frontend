@@ -2,7 +2,7 @@
 // const API_BASE_URL = 'http://localhost:3000';
 
 // const API_BASE_URL = "https://honey-api-1.onrender.com";
-const API_BASE_URL = "honey-oogiz4ddt-safidys-projects-7629980e.vercel.app";
+const API_BASE_URL = "https://honey-api-wine.vercel.app";
 
 // Types based on OpenAPI schema
 export interface User {
