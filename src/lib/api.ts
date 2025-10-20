@@ -55,10 +55,13 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
-  userId: string;
   total: number;
   status: string;
   createdAt: string;
+  userId: string;
+  address?: string | null;
+  phone?: string | null;
+  note?: string | null;
   orderItems: OrderItem[];
 }
 
