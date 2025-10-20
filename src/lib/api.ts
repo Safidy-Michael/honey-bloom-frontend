@@ -151,6 +151,12 @@ class ApiClient {
 
     return result;
   }
+    async verifyCaptcha(token: string): Promise<void> {
+    await this.request("/auth/verify-captcha", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+  }
 
   getUserFromStorage(): User | null {
     const userStr = localStorage.getItem("auth_user");
@@ -234,6 +240,7 @@ class ApiClient {
   isAuthenticated(): boolean {
     return !!this.token;
   }
+  
 }
 
 export const apiClient = new ApiClient();
