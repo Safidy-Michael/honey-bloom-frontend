@@ -70,6 +70,10 @@ export interface CreateOrderItemDto {
 export interface CreateOrderDto {
   userId: string;
   items: CreateOrderItemDto[];
+  address: string;
+  phone: string;
+  note?: string;
+
 }
 
 // API helper class
