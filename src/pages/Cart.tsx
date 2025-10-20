@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -26,7 +25,11 @@ const Cart = () => {
     getTotalPrice,
     getTotalItems,
   } = useCart();
+
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [note, setNote] = useState("");
 
   const handleCheckout = async () => {
     if (items.length === 0) {
@@ -38,13 +41,20 @@ const Cart = () => {
       return;
     }
 
+    if (!address.trim() || !phone.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Informations manquantes",
+        description: "L'adresse et le téléphone sont obligatoires.",
+      });
+      return;
+    }
+
     try {
       setIsCheckingOut(true);
 
-      // Get current user profile to get user ID
       const userProfile = await apiClient.getProfile();
 
-      // Create order with cart items
       const orderItems = items.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
@@ -53,6 +63,9 @@ const Cart = () => {
       const order = await apiClient.createOrder({
         userId: userProfile.id,
         items: orderItems,
+        address,
+        phone,
+        note,
       });
 
       clearCart();
@@ -124,7 +137,6 @@ const Cart = () => {
             <Card key={item.product.id} className="border-border/40">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
-                  {/* Product Image */}
                   {item.product.imageUrl && (
                     <div className="w-20 h-20 rounded-md overflow-hidden bg-muted flex-shrink-0">
                       <img
@@ -135,7 +147,6 @@ const Cart = () => {
                     </div>
                   )}
 
-                  {/* Product Info */}
                   <div className="flex-1 space-y-2">
                     <div className="flex items-start justify-between">
                       <div>
@@ -159,7 +170,6 @@ const Cart = () => {
                       </Button>
                     </div>
 
-                    {/* Quantity and Price */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <Button
@@ -201,12 +211,10 @@ const Cart = () => {
 
                       <div className="text-right">
                         <div className="text-sm text-muted-foreground">
-                          {item.product.price.toFixed(2)}Ariary ×{" "}
-                          {item.quantity}
+                          {item.product.price.toFixed(2)}Ariary × {item.quantity}
                         </div>
                         <div className="font-semibold text-primary">
-                          {(item.product.price * item.quantity).toFixed(2)}{" "}
-                          Ariary
+                          {(item.product.price * item.quantity).toFixed(2)} Ariary
                         </div>
                       </div>
                     </div>
@@ -215,6 +223,38 @@ const Cart = () => {
               </CardContent>
             </Card>
           ))}
+
+          {/* Formulaire checkout */}
+          <Card className="border-border/40 mt-4">
+            <CardContent className="space-y-4">
+              <h2 className="text-lg font-bold">Informations de livraison</h2>
+              <div>
+                <label className="block text-sm font-medium mb-1">Adresse *</label>
+                <Input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Ex: 12 Rue Exemple, Antananarivo"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Téléphone *</label>
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Ex: 033 12 345 67"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Note (facultative)</label>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Ex: Livraison entre 8h et 12h"
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Order Summary */}
@@ -227,7 +267,7 @@ const Cart = () => {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Sous-total ({getTotalItems()} articles)</span>
-                  <span>{getTotalPrice().toFixed(2)}Arriary</span>
+                  <span>{getTotalPrice().toFixed(2)} Ariary</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Livraison</span>
@@ -236,9 +276,7 @@ const Cart = () => {
                 <div className="border-t border-border pt-2">
                   <div className="flex justify-between font-semibold">
                     <span>Total</span>
-                    <span className="text-primary">
-                      {getTotalPrice().toFixed(2)} Ariary
-                    </span>
+                    <span className="text-primary">{getTotalPrice().toFixed(2)} Ariary</span>
                   </div>
                 </div>
               </div>
