@@ -49,7 +49,7 @@ const Login = () => {
       // On envoie le captcha avec les données de login
       const loginResult = await apiClient.login({
         ...loginForm,
-        captcha: captchaToken,
+        captchaToken: captchaToken,
       });
 
       const profile = await apiClient.getProfile();
@@ -90,7 +90,7 @@ const Login = () => {
       
       await apiClient.register({
         ...registerForm,
-        captcha: captchaToken,
+        captchaToken: captchaToken,
       });
 
       toast({
