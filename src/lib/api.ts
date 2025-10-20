@@ -1,8 +1,7 @@
 // API configuration and types for Honey API
-// const API_BASE_URL = 'http://localhost:3000';
+ //const API_BASE_URL = 'http://localhost:3000';
 
-const API_BASE_URL = "https://honey-api-1.onrender.com";
-
+ const API_BASE_URL = "https://honey-api-1.onrender.com";
 //const API_BASE_URL = "https://honey-api-wine.vercel.app";
 
 // Types based on OpenAPI schema
@@ -18,11 +17,13 @@ export interface CreateAuthDto {
   name: string;
   email: string;
   password: string;
+  captcha: string;
 }
 
 export interface LoginAuthDto {
   email: string;
   password: string;
+  captcha: string; 
 }
 
 export interface Product {
@@ -152,12 +153,12 @@ class ApiClient {
 
     return result;
   }
-    async verifyCaptcha(token: string): Promise<void> {
+    /* async verifyCaptcha(token: string): Promise<void> {
     await this.request("/auth/verify-captcha", {
       method: "POST",
       body: JSON.stringify({ token }),
     });
-  }
+  } */
 
   getUserFromStorage(): User | null {
     const userStr = localStorage.getItem("auth_user");
