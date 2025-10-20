@@ -1,8 +1,8 @@
 // API configuration and types for Honey API
- const API_BASE_URL = 'http://localhost:3000';
+// const API_BASE_URL = 'http://localhost:3000';
 
- // const API_BASE_URL = "https://honey-api-1.onrender.com";
-//const API_BASE_URL = "https://honey-api-wine.vercel.app";
+// const API_BASE_URL = "https://honey-api-1.onrender.com";
+const API_BASE_URL = "https://honey-api-wine.vercel.app";
 
 // Types based on OpenAPI schema
 export interface User {
