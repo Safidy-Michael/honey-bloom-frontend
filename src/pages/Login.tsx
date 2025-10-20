@@ -17,7 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import ReCAPTCHA from "react-google-recaptcha";
 import honeyLogo from "@/assets/honey-logo.png";
 
-const RECAPTCHA_SITE_KEY = "VOTRE_SITE_KEY_ICI";
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
 const Login = () => {
   const navigate = useNavigate();
