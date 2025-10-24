@@ -111,6 +111,7 @@ class ApiClient {
     const response = await fetch(url, {
       ...options,
       headers: { ...this.getHeaders(), ...options.headers },
+      cache: "no-store",
     });
 
     if (!response.ok) {
