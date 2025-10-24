@@ -46,12 +46,11 @@ const ClientDashboard = () => {
     try {
       const [productsData, ordersData] = await Promise.all([
         apiClient.getProducts(),
-        apiClient.getOrders(),
+        apiClient.getUserOrders(),
       ]);
       setProducts(productsData.slice(0, 6));
-      const userOrders = ordersData.filter((order) => order.userId === user?.id);
       setMyOrders(
-        userOrders.sort(
+        ordersData.sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
       );
@@ -64,7 +63,7 @@ const ClientDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, user?.id]);
+  }, [toast]);
 
   useEffect(() => {
     loadDashboardData();

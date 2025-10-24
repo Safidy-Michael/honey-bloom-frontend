@@ -218,6 +218,9 @@ class ApiClient {
     return this.request<Order>(`/orders/${id}`);
   }
 
+  async getUserOrders(): Promise<Order[]> {
+  return this.request<Order[]>("/orders/me");
+  }
   async createOrder(data: CreateOrderDto): Promise<Order> {
     return this.request<Order>("/orders", {
       method: "POST",
